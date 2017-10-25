@@ -1,7 +1,11 @@
 ﻿@{ 
     Layout = null;
 }
-<h3 class="text-center">导入诚信行为文件</h3>
+
+<div class="page-header">
+    <h3 class="text-center">导入诚信行为文件</h3>
+</div>
+
 <form class="form-horizontal" action="/Conduct/analyzefile" method="post" enctype="multipart/form-data" id="file">
     @{
         Html.RenderPartial("_Message");

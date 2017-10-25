@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -25,8 +26,6 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         public int ELID { get; set; }
         public SystemData SystemData { get; set; }
-        [NotMapped]
-        public string Title { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>
@@ -55,5 +54,13 @@ namespace LoowooTech.Faith.Models
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        public LandRecordState State { get; set; }
+    }
+    public enum LandRecordState
+    {
+        [Description("录入")]
+        Enter,
+        [Description("解除")]
+        Relieve
     }
 }

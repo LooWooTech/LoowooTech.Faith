@@ -29,7 +29,7 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="dict">受让人->供地项目名称->扣分详情</param>
         /// <param name="userID"></param>
-        public void AddRange(Dictionary<string,Dictionary<string,List<ConductStandard>>> dict,int userID)
+        public void AddRange(Dictionary<string,Dictionary<string,List<ConductStandard>>> dict,int userID,int cityId)
         {
             var inputs = new List<Conduct>();
             var dailys = new List<Daily>();
@@ -38,10 +38,10 @@ namespace LoowooTech.Faith.Managers
                 #region  获取受让人信息
                 var elid = 0;
                 SystemData? systemdata=null;
-                var enterprise = Core.EnterpriseManager.Get(entry.Key);
+                var enterprise = Core.EnterpriseManager.Get(entry.Key,cityId);
                 if (enterprise == null)
                 {
-                    var lawyer = Core.LawyerManager.Get(entry.Key);
+                    var lawyer = Core.LawyerManager.Get(entry.Key,cityId);
                     if (lawyer != null)
                     {
                         elid = lawyer.ID;
@@ -59,7 +59,8 @@ namespace LoowooTech.Faith.Managers
                     {
                         Name = "文件导入诚信行为",
                         Description = string.Format("未找到名称为{0}的企业或者自然人信息", entry.Key),
-                        UserID = userID
+                        UserID = userID,
+                        CityID=cityId
                     });
                     continue;
                 }
@@ -142,7 +143,10 @@ namespace LoowooTech.Faith.Managers
         public List<ConductStandard> Search(ConductStandardParameter parameter)
         {
             var query = Db.ConductStandards.AsQueryable();
-
+            if (parameter.CityID.HasValue)
+            {
+                query = query.Where(e => e.CityID == parameter.CityID.Value);
+            }
             if (parameter.ELID.HasValue)
             {
                 query = query.Where(e => e.ELID == parameter.ELID.Value);
@@ -213,6 +217,10 @@ namespace LoowooTech.Faith.Managers
             }
             var model = Db.ConductStandards.Find(id);
             return model;
+        }
+        public long Count(int cityID)
+        {
+            return Db.ConductStandards.Where(e => e.CityID == cityID).LongCount();
         }
     }
 }

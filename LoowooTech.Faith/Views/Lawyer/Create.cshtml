@@ -4,7 +4,10 @@
     string url = ViewBag.URL ?? "/Lawyer/Index";
 }
 
-<h3 class="text-center">录入自然人</h3>
+<div class="page-header">
+    <h3 class="text-center">录入自然人</h3>
+</div>
+
 <form class="form-horizontal" action="/Lawyer/create" method="post" id="Lawyer-form">
     @{ 
         Html.RenderPartial("_Message");
@@ -13,7 +16,7 @@
         <div class="col-md-12">
             <input type="hidden" name="ID" value="@(lawyer!=null?lawyer.ID:0)" />
             <div class="form-group">
-                <label class="control-label col-md-4">姓名：</label>
+                <label class="control-label col-md-4">姓名【必填】：</label>
                 <div class="col-md-7">
                     <input type="text" name="Name" placeholder="姓名" class="form-control" value="@(lawyer!=null?lawyer.Name:"")" required />
                 </div>

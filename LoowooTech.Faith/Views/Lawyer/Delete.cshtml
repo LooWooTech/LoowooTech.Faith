@@ -22,14 +22,16 @@
         });
     });
 </script>
+<div class="page-header">
+    <h3 class="text-center text-danger">&nbsp;删除自然人</h3>
+</div>
 
-<h3 class="text-center text-danger">&nbsp;删除自然人</h3>
 <form class="form-horizontal" method="post" id="lawyer-delete">
     <div class="form-group">
         <label class="control-label col-md-4">&nbsp;自然人名称：</label>
         <div class="col-md-7">
             <input type="hidden" name="ID" value="@(lawyer.ID)" />
-            <input type="text" name="" class="form-control" placeholder="" value="@(lawyer.Name)" />
+            <input type="text" name="" class="form-control" placeholder="" value="@(lawyer.Name)"  readonly/>
         </div>
     </div>
     <div class="form-group">

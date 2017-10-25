@@ -1,8 +1,10 @@
 ﻿using LoowooTech.Faith.Common;
 using LoowooTech.Faith.Models;
 using LoowooTech.Faith.Parameters;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -38,9 +40,11 @@ namespace LoowooTech.Faith.Controllers
                 MaxMoney = maxMoney,
                 Degree = degree,
                 Deleted = false,
+                CityID=City.ID,
                 Page = new PageParameter(page, rows)
             };
             var list = Core.EnterpriseManager.Search(parameter);
+            ViewBag.Types = Core.EnterpriseManager.GetEnterpriseType();
             ViewBag.Parameter = parameter;
             ViewBag.Page = parameter.Page;
             ViewBag.List = list;
@@ -62,6 +66,7 @@ namespace LoowooTech.Faith.Controllers
             {
                 return SuccessJsonResult("未获取企业信息");
             }
+            enterprise.CityID = City.ID;
             if (enterprise.ID > 0)
             {
                 if (!Core.EnterpriseManager.Edit(enterprise))
@@ -98,6 +103,20 @@ namespace LoowooTech.Faith.Controllers
             return SuccessJsonResult(enterprise.ID);
         }
 
+        [ChildActionOnly]
+        public ActionResult Widget()
+        {
+            var parameter = new EnterpriseParameter
+            {
+                CityID = City.ID,
+                Page = new PageParameter(1, 5)
+            };
+            var list = Core.EnterpriseManager.Search(parameter);
+            ViewBag.List = list;
+            ViewBag.Parameter = parameter;
+            return View();
+        }
+
         public ActionResult File()
         {
             return View();
@@ -117,7 +136,7 @@ namespace LoowooTech.Faith.Controllers
                 throw new AggregateException("请选择上传文件");
             }
             var filePath = FileManager.Upload(file);
-            var list = ExcelManager.AnalyzeEnterprise(filePath);
+            var list = ExcelManager.AnalyzeEnterprise(filePath,City.ID);
             Core.EnterpriseManager.AddRange(list, Identity.UserID);
             return RedirectToAction("Index");
         }
@@ -149,10 +168,10 @@ namespace LoowooTech.Faith.Controllers
         [HttpPost]
         public ActionResult Delete(int id,string remark)
         {
-            //if (Core.EnterpriseManager.Used(id))
-            //{
-            //    return ErrorJsonResult("删除失败，当前企业已经关联了违法用地或者诚信行为记录");
-            //}
+            if (Core.EnterpriseManager.Used(id))
+            {
+                return ErrorJsonResult("删除失败，当前企业已经关联了违法用地或者诚信行为记录");
+            }
             if (!Core.EnterpriseManager.Delete(id,remark))
             {
                 return ErrorJsonResult("删除失败，未找到需要删除的企业信息");
@@ -168,5 +187,24 @@ namespace LoowooTech.Faith.Controllers
             }
             return SuccessJsonResult();
         }
+
+        public ActionResult Download()
+        {
+            var list = Core.EnterpriseManager.Search(new EnterpriseParameter { Deleted = false,CityID=City.ID });
+            IWorkbook workbook = ExcelManager.SaveEnterprise(list);
+            MemoryStream ms = new MemoryStream();
+            workbook.Write(ms);
+            ms.Flush();
+            byte[] fileContents = ms.ToArray();
+            return File(fileContents, "application/ms-excel", "企业.xls");
+        }
+
+        public ActionResult Modify(int id)
+        {
+            var model = Core.EnterpriseManager.Get(id);
+            return View();
+        }
+
+        
     }
 }

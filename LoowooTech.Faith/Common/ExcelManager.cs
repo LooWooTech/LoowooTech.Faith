@@ -1,5 +1,6 @@
 ﻿using LoowooTech.Faith.Models;
 using NPOI.SS.UserModel;
+using NPOI.XWPF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +11,9 @@ namespace LoowooTech.Faith.Common
 {
     public static class ExcelManager
     {
-        public static ICell GetCell(IRow row, int line, IRow modelRow = null)
+        public static NPOI.SS.UserModel.ICell GetCell(IRow row, int line, IRow modelRow = null)
         {
-            ICell cell = row.GetCell(line);
+            NPOI.SS.UserModel.ICell cell = row.GetCell(line);
             if (cell == null)
             {
                 if (modelRow != null)
@@ -27,6 +28,34 @@ namespace LoowooTech.Faith.Common
             }
             return cell;
         }
+
+        public static XWPFTableCell GetCell(XWPFTableRow row,int line,XWPFTableRow modelRow)
+        {
+            XWPFTableCell cell= row.GetCell(line);
+            if (cell == null)
+            {
+                cell = row.CreateCell();
+                if (modelRow != null)
+                {
+                    var modelcell = modelRow.GetCell(line);
+                    cell.SetVerticalAlignment(modelcell.GetVerticalAlignment());
+                    cell.SetColor(modelcell.GetColor());
+                } 
+            }
+            return cell;
+        }
+        public static XWPFRun GetRun(XWPFTableRow row, int line, XWPFTableRow modelrow)
+        {
+            var cell = GetCell(row, line, modelrow);
+            if (cell.Paragraphs.Count == 0)
+            {
+                cell.AddParagraph();
+            }
+            var para = cell.Paragraphs[0];
+            XWPFRun run = para.CreateRun();
+            run.FontFamily = "仿宋";
+            return run;
+        }
         public static IWorkbook OpenExcel(this string filePath)
         {
             IWorkbook workbook = null;
@@ -36,9 +65,18 @@ namespace LoowooTech.Faith.Common
             }
             return workbook;
         }
-        private static ICell[] GetCells(IRow row,int startline,int endline)
+
+        public static XWPFDocument OpenWord(this string filePath)
         {
-            var cells = new ICell[endline - startline+1];
+            using (FileStream fs = File.OpenRead(filePath))
+            {
+                XWPFDocument doc = new XWPFDocument(fs);
+                return doc;
+            }
+        }
+        private static NPOI.SS.UserModel.ICell[] GetCells(IRow row,int startline,int endline)
+        {
+            var cells = new NPOI.SS.UserModel.ICell[endline - startline+1];
             var j = 0;
             for(var i = startline; i <= endline; i++)
             {
@@ -76,7 +114,7 @@ namespace LoowooTech.Faith.Common
         /// <returns></returns>
         private static Lawyer AnalyzeLawyer(IRow row)
         {
-            var cells = new ICell[11];
+            var cells = new NPOI.SS.UserModel.ICell[11];
             for(var i = 0; i < cells.Length; i++)
             {
                 cells[i] = row.GetCell(i);
@@ -108,7 +146,7 @@ namespace LoowooTech.Faith.Common
         }
         private static LandRecordView AnalyzeLandRecord(IRow row)
         {
-            var cells = GetCells(row, 0, 7);
+            var cells = GetCells(row, 0, 6);
             if (cells == null)
             {
                 return null;
@@ -126,19 +164,19 @@ namespace LoowooTech.Faith.Common
                 IllegalArea = double.TryParse(cells[2].ToString().Trim(), out a) ? a : .0,
                 Area = double.TryParse(cells[3].ToString().Trim(), out a) ? a : .0,
                 Score = double.TryParse(cells[5].ToString().Trim(), out a) ? a : .0,
-                Remark=cells[7].ToString().Trim()
+                Remark=cells[6].ToString().Trim()
             };
             return model;
         }
         private static Land AnalyzeLand(IRow row)
         {
-            var cells = GetCells(row, 0, 21);
+            var cells = GetCells(row, 0, 6);
             if (cells == null)
             {
                 return null;
             }
-            var elName = cells[2].ToString().Trim();
-            var name = cells[5].ToString().Trim();
+            var elName = cells[0].ToString().Trim();
+            var name = cells[2].ToString().Trim();
             if (string.IsNullOrEmpty(elName)||string.IsNullOrEmpty(name))
             {
                 return null;
@@ -149,26 +187,26 @@ namespace LoowooTech.Faith.Common
             {
                 ELName = elName,
                 Name = name,
-                Number = cells[6].ToString().Trim(),
-                ContractNumber = cells[7].ToString().Trim(),
-                LandNumber = cells[8].ToString().Trim(),
-                Area = double.TryParse(cells[10].ToString().Trim(), out a) ? a : .0,
-                Money=double.TryParse(cells[12].ToString().Trim(),out a)?a:.0,
-                Code=cells[13].ToString().Trim(),
-                SignTime=DateTime.TryParse(cells[15].ToString().Trim(),out time)?time:time,
-                ApproveTime=DateTime.TryParse(cells[18].ToString().Trim(),out time)?time:time,
-                Recycle=cells[19].ToString().Trim()=="否"?false:true,
-                Location=cells[20].ToString().Trim()
+               // Number = cells[7].ToString().Trim(),
+                ContractNumber = cells[3].ToString().Trim(),
+               // LandNumber = cells[8].ToString().Trim(),
+                Area = double.TryParse(cells[5].ToString().Trim(), out a) ? a : .0,
+                //Money=double.TryParse(cells[10].ToString().Trim(),out a)?a:.0,
+               // Code=cells[10].ToString().Trim(),
+                //SignTime=DateTime.TryParse(cells[11].ToString().Trim(),out time)?time:time,
+                //ApproveTime=DateTime.TryParse(cells[12].ToString().Trim(),out time)?time:time,
+                //Recycle=cells[13].ToString().Trim()=="否"?false:true,
+                Location=cells[6].ToString().Trim()
             };
-            var area = cells[11].ToString().Trim();
-            if (!string.IsNullOrEmpty(area))
-            {
-                if(double.TryParse(area,out a))
-                {
-                    land.ReplaceArea = a;
-                }
-            }
-            var way = cells[9].ToString().Trim();
+            //var area = cells[8].ToString().Trim();
+            //if (!string.IsNullOrEmpty(area))
+            //{
+            //    if(double.TryParse(area,out a))
+            //    {
+            //        land.ReplaceArea = a;
+            //    }
+            //}
+            var way = cells[4].ToString().Trim();
             if (!string.IsNullOrEmpty(way))
             {
                 try
@@ -226,7 +264,7 @@ namespace LoowooTech.Faith.Common
         /// <returns></returns>
         private static Enterprise AnalyzeEnterprise(IRow row)
         {
-            var cells = GetCells(row, 0, 17);
+            var cells = GetCells(row, 0, 16);
             if (cells == null)
             {
                 return null;
@@ -264,7 +302,7 @@ namespace LoowooTech.Faith.Common
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static List<Lawyer> AnalyzeLawyer(string filePath)
+        public static List<Lawyer> AnalyzeLawyer(string filePath,int cityID)
         {
             var list = new List<Lawyer>();
             IWorkbook workbook = filePath.OpenExcel();
@@ -283,6 +321,7 @@ namespace LoowooTech.Faith.Common
                         var lawyer = AnalyzeLawyer(row);
                         if (lawyer != null)
                         {
+                            lawyer.CityID = cityID;
                             list.Add(lawyer);
                         }
                     }
@@ -297,7 +336,7 @@ namespace LoowooTech.Faith.Common
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static List<LandRecordView> AnalyzeLandRecord(string filePath)
+        public static List<LandRecordView> AnalyzeLandRecord(string filePath,int cityID)
         {
             var list = new List<LandRecordView>();
             IWorkbook workbook = filePath.OpenExcel();
@@ -316,6 +355,7 @@ namespace LoowooTech.Faith.Common
                         var landrecord = AnalyzeLandRecord(row);
                         if (landrecord != null)
                         {
+                            landrecord.CityID = cityID;
                             list.Add(landrecord);
                         }
                     }
@@ -358,6 +398,30 @@ namespace LoowooTech.Faith.Common
             return list;
         }
 
+        private static bool IdentifyEnterprise(IRow row)
+        {
+            var attribues = ClassDescriptionHelper.Enterprises;
+            foreach(var att in attribues)
+            {
+
+            }
+            for(var i = 0; i <= row.LastCellNum; i++)
+            {
+                var cell = row.GetCell(i);
+                if (cell == null)
+                {
+                    break;
+                }
+                var str = cell.ToString().Trim();
+                if (string.IsNullOrEmpty(str))
+                {
+                    break;
+                }
+
+            }
+            return false;
+        }
+
         /// <summary>
         /// 作用：分析企业文件得到企业列表
         /// 作者：汪建龙
@@ -365,7 +429,7 @@ namespace LoowooTech.Faith.Common
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static List<Enterprise> AnalyzeEnterprise(string filePath)
+        public static List<Enterprise> AnalyzeEnterprise(string filePath,int cityID)
         {
             var list = new List<Enterprise>();
             IWorkbook workbook = filePath.OpenExcel();
@@ -384,8 +448,10 @@ namespace LoowooTech.Faith.Common
                         try
                         {
                             var enterprise = AnalyzeEnterprise(row);
+
                             if (enterprise != null)
                             {
+                                enterprise.CityID = cityID;
                                 list.Add(enterprise);
                             }
                         }
@@ -436,6 +502,94 @@ namespace LoowooTech.Faith.Common
                 }
             }
             return list;
+        }
+
+        
+        public static IWorkbook SaveConduct(List<ConductStandard> list)
+        {
+            IWorkbook workbook = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["Conduct"]).OpenExcel();
+            if (workbook != null)
+            {
+                ISheet sheet = workbook.GetSheetAt(0);
+                var startline = 1;
+                if (sheet != null)
+                {
+                    var modelrow = sheet.GetRow(startline);
+                    foreach(var conduct in list)
+                    {
+                        var row = sheet.GetRow(startline);
+                        if (row == null)
+                        {
+                            row = sheet.CreateRow(startline);
+                        }
+                        startline++;
+                        var cell = GetCell(row, 0, modelrow);
+                        cell.SetCellValue(conduct.Code);
+                        GetCell(row, 1, modelrow).SetCellValue(conduct.LandNumber);
+                        GetCell(row, 2, modelrow).SetCellValue("330421");
+                        GetCell(row, 3, modelrow).SetCellValue(conduct.StandardName);
+                        if (conduct.SystemData == SystemData.Enterprise)
+                        {
+                            GetCell(row, 8, modelrow).SetCellValue(conduct.ELName);
+                        }
+                        else
+                        {
+                            GetCell(row, 7, modelrow).SetCellValue(conduct.ELName);
+                        }
+                        GetCell(row, 9, modelrow).SetCellValue(conduct.LandName);
+                    }
+                }
+            }
+            return workbook;
+        }
+
+        /// <summary>
+        /// 作用：保存企业相关数据
+        /// 作者：汪建龙
+        /// 编写时间：2017年4月12日13:33:44
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static IWorkbook SaveEnterprise(List<Enterprise> list)
+        {
+            IWorkbook workbook = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["Enterprise"]).OpenExcel();
+            if (workbook != null)
+            {
+                ISheet sheet = workbook.GetSheetAt(0);
+                var startline = 1;
+                if (sheet != null)
+                {
+                    var modelRow = sheet.GetRow(startline);
+                    foreach(var enterprise in list)
+                    {
+                        var row = sheet.GetRow(startline);
+                        if (row == null)
+                        {
+                            row = sheet.CreateRow(startline);
+                        }
+                        startline++;
+                        var cell = GetCell(row, 0, modelRow);
+                        cell.SetCellValue(enterprise.Name);
+                        GetCell(row, 1, modelRow).SetCellValue(enterprise.OIBC);
+                        GetCell(row, 2, modelRow).SetCellValue(enterprise.USCC);
+                        GetCell(row, 3, modelRow).SetCellValue("浙江省");
+                        GetCell(row, 4, modelRow).SetCellValue("嘉兴市");
+                        GetCell(row, 5, modelRow).SetCellValue("嘉善县");
+                        GetCell(row, 6, modelRow).SetCellValue(enterprise.Address);
+                        GetCell(row, 7, modelRow).SetCellValue(enterprise.Lawyer);
+                        GetCell(row, 8, modelRow).SetCellValue(enterprise.LawNumber);
+                        GetCell(row, 9, modelRow).SetCellValue(enterprise.Number);
+                        GetCell(row, 10, modelRow).SetCellValue(enterprise.Scope);
+                        GetCell(row, 11, modelRow).SetCellValue(enterprise.Type);
+                        GetCell(row, 12, modelRow).SetCellValue(enterprise.Money);
+                        GetCell(row, 13, modelRow).SetCellValue(enterprise.TelPhone);
+                        //GetCell(row, 14, modelRow).SetCellValue();
+                        GetCell(row, 15, modelRow).SetCellValue(enterprise.Contact);
+                        GetCell(row, 16, modelRow).SetCellValue(enterprise.ContactWay);
+                    }
+                }
+            }
+            return workbook;
         }
     }
 }

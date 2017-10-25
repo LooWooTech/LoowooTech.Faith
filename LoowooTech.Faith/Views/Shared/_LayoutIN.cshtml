@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>@(ViewBag.Title)</title>
+
+    <link rel="stylesheet" href="~/Content/IN/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/IN/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/Content/IN/css/animate.css" />
+    <link rel="stylesheet" href="~/Content/IN/css/style.css" />
+
+    <script src="~/Content/IN/js/jquery-3.1.1.min.js"></script>
+    <script src="~/Content/IN/js/bootstrap.min.js"></script>
+    <script src="~/Content/IN/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="~/Content/IN/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/Content/IN/js/inspinia.js"></script>
+    <script src="~/Content/IN/js/plugins/pace/pace.min.js"></script>
+    <script src="~/Content/IN/js/plugins/flot/jquery.flot.js"></script>
+    <script src="~/Content/IN/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="~/Content/IN/js/plugins/flot/jquery.flot.resize.js"></script>
+
+    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/TodoMessage.js"></script>
+    <script src="~/Scripts/jquery.datetimepicker.js"></script>
+    <script src="~/Scripts/Contract.js"></script>
+    <script src="~/Scripts/Faith.js"></script>
+
+
+    <script>
+        $(function () {
+            $("#Modal").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+    </script>
+    <script>
+    $(function () {
+        $("a[name='Check']").click(function () {
+            if (confirm("您确定？")) {
+                ShowMessage("正在审核，请稍等......");
+                var href = $(this).attr("href");
+                var reason = $("input[name='Reason']").val();
+                console.log(reason);
+                href = href + "&&reason=" + reason;
+                $.request(href, reason, function (json) {
+                    if (json.result == 0) {
+                        ShowErrorMessage(json.content);
+
+                    } else {
+                        ShowSuccessMessage("审核完成");
+                        location.href = "@(Request.Url.PathAndQuery)";
+                    }
+                });
+            }
+            return false;
+        });
+        $("a[name='Relieve']").click(function () {
+            var button = $(this);
+            button.text("正在解除").attr("disabled", "disabled");
+            ShowMessage("正在解除，请稍等......");
+            var href = $(this).attr("href");
+            $.request(href, null, function (json) {
+                if (json.result == 0) {
+                    ShowErrorMessage(json.content);
+                } else {
+                    ShowSuccessMessage("成功解除");
+                    location.href = "@(Request.Url.PathAndQuery)";
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav metismenu" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold">@(Identity.Name)</strong>
+                                    </span> <span class="text-muted text-xs block">@(Identity.Role.GetDescription()) <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="/User/LoginOut">注销</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            @*<img src="~/Images/logo.png" />*@
+                        </div>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="Home".ToLower()?"active":"")">
+                        <a href="/Home/Index3"><i class="fa fa-home"></i> <span class="nav-label">首页</span></a>
+                    </li>
+
+                    <li class="@(ViewBag.Controller.ToLower()=="Enterprise".ToLower()?"active":"")">
+                        <a href="/Enterprise/Index"><i class="fa fa-briefcase"></i><span class="nav-label">企业管理</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="Lawyer".ToLower()?"active":"")">
+                        <a href="/Lawyer/Index"><i class="fa fa-user"></i><span class="nav-label">自然人管理</span></a>
+                    </li>
+
+                    <li class="@(ViewBag.Controller.ToLower()=="Land".ToLower()?"active":"")">
+                        <a href="/Land"><i class="fa fa-map-marker"></i><span class="nav-label">供地信息管理</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="LandRecord".ToLower()?"active":"")">
+                        <a href="/LandRecord"><i class="fa fa-info"></i><span class="nav-label">违法用地管理</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="Conduct".ToLower()?"active":"")">
+                        <a href="/Conduct"><i class="fa fa-credit-card"></i><span class="nav-label">诚信行为管理</span></a>
+                    </li>
+      
+                    <li class="@(ViewBag.Controller.ToLower()=="Roll".ToLower()&&ViewBag.Action.ToLower()=="Black".ToLower()?"active":"")">
+                        <a href="/Roll/Black"><i class="fa fa-ban"></i><span class="nav-label">黑名单</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="Roll".ToLower()&&ViewBag.Action.ToLower()=="Red".ToLower()?"active":"")">
+                        <a href="/Roll/Red"><i class="fa fa-question"></i><span class="nav-label">异常名单</span></a>
+                    </li>
+
+                    <li class="@(ViewBag.Controller.ToLower()=="Grade".ToLower()?"active":"")">
+                        <a href="/Grade/Index"><i class="fa fa-leaf"></i><span class="nav-label">信用评级计算</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="FlowNode".ToLower()?"active":"")">
+                        <a href="/FlowNode"><i class="fa fa-tint"></i><span class="nav-label">审核管理</span></a>
+                    </li>
+                    <li class="@(ViewBag.Controller.ToLower()=="Recycle".ToLower()?"active":"")">
+                        <a href="/Recycle"><i class="fa fa-trash"></i><span class="nav-label">回收站</span></a>
+                    </li>
+                  
+                </ul>
+
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                      
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <a href="/User/LoginOut">
+                                <i class="fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+
+                </nav>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight">
+                @RenderBody()
+            </div>
+            <div class="footer">
+              
+                <div>
+                    <strong>Copyright</strong> 杭州陆吾科技信息咨询有限公司 &copy; 2011-@(DateTime.Now.Year)
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" id="Modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">正在加载...<span aria-hidden="true">&times;</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

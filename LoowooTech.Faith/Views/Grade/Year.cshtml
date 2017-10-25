@@ -1,0 +1,88 @@
+﻿
+@{
+    //ViewBag.Title = "年度信用评级管理";
+    Layout = null;
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+    List<GradeHistory> list = ViewBag.List;
+
+}
+
+<div class="page-header">
+    <h3>年度评级情况</h3>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#Home" aria-controls="Home" role="tab" data-toggle="tab">列表</a></li>
+    <li role="presentation"><a href="#Pic" aria-controls="Pic" role="tab" data-toggle="tab">统计图</a></li>
+</ul>
+
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="Home">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>创建时间</th>
+                    <th>说明</th>
+                    <th>信用评级统计</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in list.OrderByDescending(e => e.Time))
+                {
+                    <tr>
+                        <td>@(item.Name)</td>
+                        <td>@(item.Time.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                        <td>@(item.Description)</td>
+                        <td>
+                            @{
+                                var scores = item.ScoresHistorys;
+                                if (scores == null)
+                                {
+                                    return;
+                                }
+                                var enterprises = scores.Where(e => e.SystemData == SystemData.Enterprise).ToList();
+                                var lawyers = scores.Where(e => e.SystemData == SystemData.Lawyer).ToList();
+                            }
+                            <p>@string.Format("本次统计用地主体数量：{0};", scores.Count)</p>
+                            <p>
+                                @string.Format("企业：{0}；其中A：{1}；B：{2}；C：{3}；D：{4}；",
+                                       enterprises.Count,
+                                       enterprises.Where(e => e.Degree == GradeDegree.A).Count(),
+                                       enterprises.Where(e => e.Degree == GradeDegree.B).Count(),
+                                       enterprises.Where(e => e.Degree == GradeDegree.C).Count(),
+                                       enterprises.Where(e => e.Degree == GradeDegree.D).Count())
+                            </p>
+                            <p>
+                                @string.Format("自然人：{0}；其中A：{1}；B：{2}；C：{3}；D：{4}；",
+                                       lawyers.Count,
+                                       lawyers.Where(e => e.Degree == GradeDegree.A).Count(),
+                                       lawyers.Where(e => e.Degree == GradeDegree.B).Count(),
+                                       lawyers.Where(e => e.Degree == GradeDegree.C).Count(),
+                                       lawyers.Where(e => e.Degree == GradeDegree.D).Count())
+                            </p>
+                        </td>
+                        <td>
+                            <a href="/Grade/StatisticYear?id=@(item.ID)" class="btn btn-success btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-picture"></i>&nbsp;图表统计</a>
+                            <a href="/Grade/Create?id=@(item.ID)" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>&nbsp;编辑</a>
+                            <a href="/Grade/Delete?id=@(item.ID)" name="Delete" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove-sign"></i>&nbsp;删除</a>
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="Pic">
+
+
+
+    </div>
+</div>
+
+
+
+
+
+

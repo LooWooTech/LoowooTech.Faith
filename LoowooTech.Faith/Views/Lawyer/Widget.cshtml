@@ -1,0 +1,19 @@
+﻿@{ 
+    Layout = null;
+    List<Lawyer> list = ViewBag.List;
+    LawyerParameter parameter = ViewBag.Parameter;
+}
+
+<div class="widget p-lg Lawyer text-white">
+    <div class="m-b-md">
+        <div class="row">
+            <div class="col-md-4">
+                <i class="fa fa-user fa-5x"></i>
+            </div>
+            <div class="col-md-8 text-right">
+                <a href="/Lawyer/Index" class="btn btn-outline btn-info"><h1 class="m-xs font-bold">自然人管理</h1></a>
+                <h3 class="font-bold">自然人数量： @(parameter.Page.RecordCount)</h3>
+            </div>
+        </div>
+    </div>
+</div>

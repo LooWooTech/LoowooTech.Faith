@@ -17,7 +17,7 @@ namespace LoowooTech.Faith.Managers
         /// <param name="name">登录名</param>
         /// <param name="password">明文密码 无需加密</param>
         /// <returns></returns>
-        public User Login(string name,string password)
+        public User Login(string name,string password,int cityID)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(password))
             {
@@ -25,7 +25,7 @@ namespace LoowooTech.Faith.Managers
             }
             password = password.MD5();
           
-            return Db.Users.FirstOrDefault(e => e.Name.ToLower() == name.ToLower() && e.Password.ToLower() == password.ToLower());
+            return Db.Users.FirstOrDefault(e => e.Name.ToLower() == name.ToLower() && e.Password.ToLower() == password.ToLower()&&e.CityID==cityID);
         }
         /// <summary>
         /// 作用：验证系统中是否已存在  登录名不区分大小写
@@ -34,13 +34,13 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="name">系统登录名</param>
         /// <returns></returns>
-        public bool Exist(string name)
+        public bool Exist(string name,int cityID)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
-            var user = Db.Users.FirstOrDefault(e => e.Name.ToLower() == name.ToLower());
+            var user = Db.Users.FirstOrDefault(e => e.Name.ToLower() == name.ToLower()&&e.CityID==cityID);
             return user != null;
         }
         /// <summary>
@@ -67,9 +67,9 @@ namespace LoowooTech.Faith.Managers
         /// 编写时间：2017年3月7日13:29:42
         /// </summary>
         /// <returns></returns>
-        public List<User> GetList()
+        public List<User> GetList(int cityID)
         {
-            return Db.Users.OrderByDescending(e => e.Role).ToList();
+            return Db.Users.Where(e=>e.CityID==cityID).OrderByDescending(e => e.Role).ToList();
         }
         /// <summary>
         /// 作用：授权用户登录
@@ -149,9 +149,24 @@ namespace LoowooTech.Faith.Managers
         /// 编写时间：2017年3月7日14:50:03
         /// </summary>
         /// <returns></returns>
-        public List<User> GetManager()
+        public List<User> GetManager(int cityId)
         {
-            return Db.Users.Where(e => e.Role == UserRole.Manager).ToList();
+            return Db.Users.Where(e => e.Role == UserRole.Manager&&e.CityID==cityId).ToList();
+        }
+
+        /// <summary>
+        /// 作用：添加用户
+        /// 作者：汪建龙
+        /// 编写时间：2017年4月2日19:01:37
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public int Save(User user)
+        {
+            user.Password = user.Password.MD5();
+            Db.Users.Add(user);
+            Db.SaveChanges();
+            return user.ID;
         }
 
     }

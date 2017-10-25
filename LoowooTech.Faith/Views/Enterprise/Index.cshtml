@@ -2,15 +2,23 @@
 @{
     ViewBag.Title = "企业管理";
     List<Enterprise> list = ViewBag.List;
+    //Layout = "~/Views/Shared/_Layout.cshtml";
     Layout = "~/Views/Shared/_Layout.cshtml";
     EnterpriseParameter parameter = ViewBag.Parameter;
+    List<string> types = ViewBag.Types;
+    int serial = 1;
 }
 
 <div class="page-header">
     <h2>
         &nbsp;企业管理&nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="btn btn-primary" href="/Enterprise/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加企业信息</a>
-        <a class="btn btn-primary" href="/Enterprise/File" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-file"></i>导入Excel文件</a>
+        @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+        {
+            <a class="btn btn-primary" href="/Enterprise/Create" data-toggle="modal" data-target="#Modal"><i class="fa fa-plus"></i>添加企业信息</a>
+            <a class="btn btn-success waves-effect waves-light" href="/Enterprise/File" data-toggle="modal" data-target="#Modal"><i class="fa fa-file"></i>导入Excel文件</a>
+            <a class="btn btn-info waves-effect waves-light" href="/Enterprise/Download"><i class="fa fa-download"></i>&nbsp;下载企业数据文件</a>
+        }
+        <a class="btn btn-warning waves-effect waves-light" href="/Grade/StatisticEnterprise" data-toggle="modal" data-target="#Modal"><i class="fa fa-picture-o"></i>&nbsp;统计图表</a>
     </h2>
 </div>
 
@@ -30,7 +38,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Name)?"success":"default")" name="Name">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Name)?"primary":"default") " name="Name">全部</button>
                                 </div>
                                 <input type="text" name="Name" placeholder="企业关键字" class="form-control" value="@(parameter.Name)" />
                             </div>
@@ -53,7 +61,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.OIBC)?"success":"default")" name="OIBC">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.OIBC)?"primary":"default")" name="OIBC">全部</button>
                                 </div>
                                 <input type="text" name="OIBC" placeholder="组织机构代码" class="form-control" value="@(parameter.OIBC)" />
                             </div>
@@ -64,7 +72,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.USCC)?"success":"default")" name="USCC">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.USCC)?"primary":"default")" name="USCC">全部</button>
                                 </div>
                                 <input type="text" name="USCC" placeholder="统一社会信息代码" class="form-control" value="@(parameter.USCC)" />
                             </div>
@@ -75,7 +83,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Lawyer)?"success":"default")" name="Lawyer">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Lawyer)?"primary":"default")" name="Lawyer">全部</button>
                                 </div>
                                 <input type="text" name="Lawyer" placeholder="企业法人" class="form-control" value="@(parameter.Lawyer)" />
                             </div>
@@ -86,7 +94,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Number)?"success":"default")" name="Number">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Number)?"primary":"default")" name="Number">全部</button>
                                 </div>
                                 <input type="text" name="Number" placeholder="营业执照/注册号" class="form-control" value="@(parameter.Number)" />
                             </div>
@@ -95,12 +103,20 @@
                     <div class="form-group">
                         <label class="control-label">&nbsp;企业类型：</label>
                         <div class="col-md-12">
-                            <div class="input-group input-group-sm" role="group">
+                            <select name="Type" class="form-control">
+                                <option value="" @(string.IsNullOrEmpty(parameter.Type)?"selected=selected":"")>全部</option>
+                                @foreach(var type in types)
+                                {
+                                    <option value="@(string.IsNullOrEmpty(type)?"NULL": type)" @(!string.IsNullOrEmpty(parameter.Type)&&parameter.Type==type?"selected=selected":"")>@(string.IsNullOrEmpty(type)?"空":type)</option>
+                                }
+                            </select>
+
+                            @*<div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Type)?"success":"default")" name="Type">全部</button>
                                 </div>
                                 <input type="text" name="Type" placeholder="企业类型" class="form-control" value="@(parameter.Type)" />
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                     <div class="form-group">
@@ -118,7 +134,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Contact)?"success":"default")" name="Contact">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.Contact)?"primary":"default")" name="Contact">全部</button>
                                 </div>
                                 <input type="text" name="Contact" placeholder="联系人" class="form-control" value="@(parameter.Contact)" />
                             </div>
@@ -129,8 +145,8 @@
                         <label class="control-label">&nbsp;查询:</label>
                         <div class="col-md-12">
                             <div class="btn-group" role="group">
-                                <button type="submit" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-search"></i> 立即查询</button>
-                                <button type="button" class="btn btn-sm btn-default" onclick="history.back();"><i class="glyphicon glyphicon-arrow-left"></i>返回</button>
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 立即查询</button>
+                                <button type="button" class="btn btn-sm btn-default" onclick="history.back();"><i class="fa fa-arrow-left"></i>返回</button>
                             </div>
                         </div>
                     </div>
@@ -139,9 +155,10 @@
         </form>
     </div>
     <div class="col-md-10">
-        <table class="table table-hover table-striped table-condensed">
-            <thead>
+        <table class="table table-hover table-striped table-condensed table-sm">
+            <thead class="thead-default">
                 <tr>
+                    <th>序号</th>
                     <th>企业名称</th>
                     <th>诚信评价</th>
                     <th>统一社会信用代码</th>     
@@ -151,13 +168,18 @@
                     <th>注册资本【万元】</th>
                     <th>联系人名字</th>
                     <th>联系电话</th>
-                    <th>操作</th>
+                    @if (Identity.Role > UserRole.Guest)
+                    {
+                        <th>操作</th>
+                    }
+                  
                 </tr>
             </thead>
             <tbody>
                 @foreach(var item in list)
                 {
                     <tr>
+                        <td>@(serial++)</td>
                         <td>
                             <a href="/Enterprise/Detail?id=@(item.ID)">
                                 @if (item.Name.Length > 20)
@@ -174,18 +196,18 @@
                         <td style="padding:0px;">
                             <h3 style="margin-top:5px;">
                                 @switch (item.Degree)
-                                        {
-                                            case GradeDegree.A:
-                                        <label class="label label-success">@(item.Degree.ToString())</label>
+                                {
+                                    case GradeDegree.A:
+                                        <span class="badge badge-primary">@(item.Degree.ToString())</span>
                                         break;
                                     case GradeDegree.B:
-                                        <label class="label label-warning">@(item.Degree.ToString())</label>
+                                        <span class="badge badge-info">@(item.Degree.ToString())</span>
                                         break;
                                     case GradeDegree.C:
-                                        <label class="label label-default">@(item.Degree.ToString())</label>
+                                        <span class="badge badge-warning">@(item.Degree.ToString())</span>
                                         break;
                                     case GradeDegree.D:
-                                        <label class="label label-danger">@(item.Degree.ToString())</label>
+                                        <span class="badge badge-danger">@(item.Degree.ToString())</span>
                                         break;
                                 }
                             </h3>
@@ -196,15 +218,25 @@
                         <td>@(item.Money)</td>
                         <td>@(item.Contact)</td>
                         <td>@(item.TelPhone)</td>
-                        <td>
-                            @if (item.LawyerID.HasValue)
-                            {
-                                <a class="btn btn-primary btn-xs" href="/Lawyer/detail?id=@(item.LawyerID.Value)"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看自然人</a>
-                            }
-                            <a class="btn btn-warning btn-xs" href="/LandRecord/Create?systemdata=@(SystemData.Enterprise)&&elid=@(item.ID)&&name=@(item.Name)"data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-screenshot"></i>违法用地</a>
-                            <a class="btn btn-primary btn-xs" href="/Enterprise/Create?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
-                            <a class="btn btn-danger btn-xs" href="/Enterprise/Delete?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-remove-circle"></i>删除</a>
-                        </td>
+                        @if (Identity.Role > UserRole.Guest)
+                        {
+                            <td>
+                                <div class="btn-group">
+                                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-sm" aria-expanded="false">操作<span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        @if (item.LawyerID.HasValue)
+                                        {
+                                            <li><a class="dropdown-item" href="/Lawyer/detail?id=@(item.LawyerID.Value)"><i class="fa fa-eye"></i>&nbsp;查看自然人</a></li> 
+                                            <li class="divider"></li>
+                                        }
+                                        <li><a class="dropdown-item" href="/LandRecord/Create?systemdata=@(SystemData.Enterprise)&&elid=@(item.ID)&&name=@(item.Name)" data-toggle="modal" data-target="#Modal"><i class="fa fa-info"></i>&nbsp;违法用地</a></li>
+                                        <li><a class="dropdown-item" href="/Enterprise/Create?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="fa fa-edit"></i>&nbsp;编辑</a></li>
+                                        <li><a class="dropdown-item" href="/Enterprise/Delete?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="fa fa-remove"></i>&nbsp;删除</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        }
+                      
                     </tr>
                 }
             </tbody>

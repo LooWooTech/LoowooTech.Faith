@@ -2,7 +2,10 @@
     Layout = null;
 }
 
-<h3 class="text-center">导入企业文件</h3>
+<div class="page-header">
+    <h3 class="text-center">&nbsp; 导入企业文件</h3>
+</div>
+
 <form class="form-horizontal" action="/Enterprise/analyzefile" method="post" enctype="multipart/form-data" id="file">
     @{
         Html.RenderPartial("_Message");

@@ -1,0 +1,156 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutMi.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <h4 class="page-title">欢迎登陆使用 !</h4>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card-box">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-6 text-center text-primary"><i class="fa fa-briefcase fa-5x"></i></div>
+                        <div class="col-6">
+                            <h2 class="m-t-0 text-muted"><b>企业</b></h2>
+                            <p class="text-muted">企业数量：@(ViewBag.ECount)</p>
+                            <p class="clearfix"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-3">
+                            <h4 class="text-primary m-t-0">A</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-primary m-t-0">B</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-primary m-t-0">C</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-primary m-t-0">D</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-box">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-6 text-center text-success"><i class="fa fa-user fa-5x"></i></div>
+                        <div class="col-6">
+                            <h2 class="m-t-0 text-muted"><b>自然人</b></h2>
+                            <p class="text-muted">自然人数量：@(ViewBag.LCount)</p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-3">
+                            <h4 class="text-success m-t-0">A</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-success m-t-0">B</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-success m-t-0">C</h4>
+                        </div>
+                        <div class="col-3">
+                            <h4 class="text-success m-t-0">D</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="widget-bg-color-icon card-box">
+            <div class="bg-icon bg-icon-danger pull-left">
+                <i class="fa fa-info"></i>
+            </div>
+            <div class="text-right">
+                <h3 class="text-dark m-t-10">违法用地</h3>
+                <p class="text-pink mb-0">@(ViewBag.LandRecordCount)</p>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="widget-bg-color-icon card-box">
+            <div class="bg-icon bg-icon-warning pull-left">
+                <i class="fa fa-question"></i>
+            </div>
+            <div class="text-right">
+                <h3 class="text-dark m-t-10">异常名单</h3>
+                <p class="text-warning mb-0">@(ViewBag.Red)</p>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="widget-bg-color-icon card-box">
+            <div class="bg-icon bg-icon-inverse pull-left">
+                <i class="fa fa-ban"></i>
+            </div>
+            <div class="text-right">
+                <h3 class="text-dark m-t-10">黑名单</h3>
+                <p class="text-inverse mb-0">@(ViewBag.Black)</p>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card-box bg-primary">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-6 text-center text-white"><span class="fa fa-credit-card fa-5x"></span></div>
+                        <div class="col-6">
+                            <h2 class="m-t-0 text-white"><b>诚信行为</b></h2>
+                            <p class="text-white">信用行为记录信息</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-box bg-info">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-6 text-center text-white"><span class="fa fa-map-marker fa-5x"></span></div>
+                        <div class="col-6">
+                            <h2 class="m-t-0 text-white"><b>供地信息</b></h2>
+                            <p class="text-white">用地主体拿地记录信息；</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

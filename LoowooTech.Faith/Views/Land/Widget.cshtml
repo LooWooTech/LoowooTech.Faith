@@ -1,0 +1,39 @@
+﻿@{ 
+    Layout = null;
+    List<LandView> list = ViewBag.List;
+    LandViewParameter parameter = ViewBag.Parameter;
+}
+
+<div class="widget-head-color-box lazur-bg text-center p-lg">
+    <div class="m-b-md">
+        <a href="/Land/Index" class="btn btn-info"><h2 class="font-bold no-margins">供地信息</h2></a>
+        <p><small>用地主体拿地信息记录</small></p>
+       
+    </div>
+    <i class="fa fa-map-marker fa-5x"></i>
+    <div>
+        <span>供地数量：@(parameter.Page.RecordCount)</span>|
+        <span><a href="/Land/Index" class="btn btn-info font-bold">详情</a></span>
+    </div>
+</div>
+<div class="ibox collapsed">
+    <div class="ibox-title">
+        <h5>供地信息列表</h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="close-link">
+                <i class="fa fa-times"></i>
+            </a>
+        </div>
+    </div>
+    <div class="ibox-content" style="display:none">
+        <ul class="list-group">
+            @foreach (var item in list)
+            {
+                <li class="list-group-item"><a href="/Land/Detail?id=@(item.ID)" class="text-muted">@(item.Name)</a> </li>
+            }
+        </ul>
+    </div>
+</div>

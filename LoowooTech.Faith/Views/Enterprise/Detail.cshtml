@@ -3,6 +3,7 @@
     ViewBag.Title = "企业查看";
     Enterprise enterprise = ViewBag.Model;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.SystemData = SystemData.Enterprise;
 }
 <br />
 
@@ -74,8 +75,8 @@
 
 
 @{ 
-    Html.RenderPartial("_Subject", enterprise as Subject);
-    Html.RenderAction("Score", "Grade", new { ELID = enterprise.ID, systemdata = SystemData.Enterprise });
+    Html.RenderPartial("_Subject", enterprise as Subject);//关联的信用级别
+    //Html.RenderAction("Score", "Grade", new { ELID = enterprise.ID, systemdata = SystemData.Enterprise });//动态查询的信用级别
    // Html.RenderAction("Detail", "Rank", new { ELID = enterprise.ID, systemData = SystemData.Enterprise });
     Html.RenderAction("DetailList", "Land", new { ELID = enterprise.ID, SystemData = SystemData.Enterprise });
     Html.RenderAction("Detail", "Conduct", new { ELID = enterprise.ID, SystemData = SystemData.Enterprise });

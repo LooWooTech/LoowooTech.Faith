@@ -8,11 +8,13 @@
     {
         return;
     }
+    int serial = 1;
 }
 
 <table class="table table-hover table-striped">
     <thead>
         <tr>
+            <th>序号</th>
             <th>录入时间</th>
             <th>企业/自然人</th>
             <th>名称</th>
@@ -23,13 +25,19 @@
             <th>扣分</th>
             <th>备注</th>
             <th>状态</th>
-            <th>操作</th>
+            <th>资料</th>
+            @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+            {
+                <th>操作</th>
+            }
+            
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in list)
+        @foreach (var item in list)
         {
             <tr>
+                <td>@(serial++)</td>
                 <td>@(item.CreateTime.ToString("yyyy-MM-dd"))</td>
                 <td>@(item.SystemData.GetDescription())</td>
                 <td>
@@ -63,27 +71,62 @@
                 <td>@(item.Remark)</td>
                 <td>@(item.State.HasValue?item.State.Value.GetDescription():"未提交")</td>
                 <td>
-                    @if (!item.State.HasValue || item.State.Value == BaseState.DisAgree)
+                    <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">资料操作<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest && item.State.HasValue && (item.State.Value == BaseState.Argee || item.State.Value == BaseState.Relieve))
+                            {
+                                <li><a href="/File/Create?sid=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;录入</a></li>
+                               
+                            }
+                            <li><a href="/File/DetailWindows?sid=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看</a></li>
+                        </ul>
+                    </div>
+                </td>
+                @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                {
+                    <td>
+                        <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">操作<span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                @if (!item.State.HasValue || item.State.Value == BaseState.DisAgree)
                     {
+                                    <li><a href="/FlowNode/Create?infoId=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-upload"></i>提交审核</a></li>
+                                    <li><a href="/Conduct/Create?id=@(item.ID)&&dataid=@(item.ELID)&&systemdata=@(item.SystemData)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a></li>
+                                    <li><a href="/Conduct/Delete?id=@(item.ID)" name="Delete"><i class="glyphicon glyphicon-remove-circle"></i>撤销</a></li>
 
-                        <a class="btn btn-success btn-xs" href="/FlowNode/Create?infoId=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-upload"></i>提交审核</a>
-                        <a class="btn btn-primary btn-xs" href="/Conduct/Create?id=@(item.ID)&&dataid=&&systemdata=@(item.SystemData)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
-                        <a class="btn btn-danger btn-xs" href="/Conduct/Delete?id=@(item.ID)" name="Delete"><i class="glyphicon glyphicon-remove-circle"></i>撤销</a>
-                    }
-                    @if (item.State.HasValue)
+
+
+                                }
+                                else
+                                {
+                                    if (Identity.Role == UserRole.Administrator)
+                                    {
+                                        <li><a href="/Conduct/Create?id=@(item.ID)&&dataid=@(item.ELID)&&systemdata=@(item.SystemData)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a></li>
+
+                                    }
+                                }
+                                @if (item.State.HasValue)
                     {
                         if (item.State.Value == BaseState.Argee)
                         {
-                            <a class="btn btn-info btn-xs" href="/Conduct/Relieve?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-flag"></i>解除</a>
-                        }
-                        if (item.State.Value == BaseState.Relieve)
-                        {
-                            <a class="btn btn-success btn-xs" href="/Conduct/CancelRelieve?id=@(item.ID)" name="Relieve"><i class="glyphicon glyphicon-flag"></i>撤销解除</a>
-                        }
-                    }
-                    
-                   
-                </td>
+                                        <li><a href="/Conduct/Relieve?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-flag"></i>解除</a></li>
+
+                                    }
+                                    if (item.State.Value == BaseState.Relieve)
+                                    {
+                                        <li><a href="/Conduct/CancelRelieve?id=@(item.ID)" name="Relieve"><i class="glyphicon glyphicon-flag"></i>撤销解除</a></li>
+
+                                    }
+                                }
+                            </ul>
+                        </div>
+           
+
+
+                    </td>
+                }
+             
             </tr>
         }
     </tbody>

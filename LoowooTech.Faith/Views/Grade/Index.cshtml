@@ -14,14 +14,36 @@
 <div class="row">
     <div class="col-md-12">
         @{
-            Html.RenderPartial("_Message");
+            //Html.RenderPartial("_Message");
         }
        
-        <div class="well">
+        <div class="alert alert-warning">
             每年12月31日点击开始计算信用评级按钮，系统将自动计算和更新企业及自然人的信用级别信息。
         </div>
-        <a href="/Grade/Calculate" class="btn btn-primary btn-large" name="Work"><i class="glyphicon glyphicon-tree-deciduous"></i>&nbsp; 开始计算信用评级</a> 
-        <a href="/Grade/download" class="btn btn-primary btn-large"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载综合分值表</a>   
+      
+        <form class="form-inline" action="/Grade/Download">
+            <a class="btn btn-primary" href="/Grade/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-tree-deciduous"></i>&nbsp; 计算信用评级</a> 
+            @*<a href="/Grade/Calculate" class="btn btn-primary btn-large" name="Work"><i class="glyphicon glyphicon-tree-deciduous"></i>&nbsp; 开始计算信用评级</a>*@ 
+          
+            <div class="form-group">
+                <label class="control-label">&nbsp;信用等级：</label>
+                <select class="form-control" name="degree">
+                    <option value="">全部</option>
+                    @foreach(GradeDegree degree in Enum.GetValues(typeof(GradeDegree)))
+                    {
+                        <option value="@(degree)">@(degree.GetDescription())</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success btn-large"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载综合分值表</button>   
+            <a href="/Grade/Statistic" class="btn btn-warning btn-large" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-picture"></i>&nbsp;统计图表</a>
+            @*<a href="/Grade/List" class="btn btn-primary btn-large"><i class="glyphicon glyphicon-download-alt"></i>&nbsp; 下载嘉兴市表格</a>*@
+         
+        </form>
+        @{
+            Html.RenderAction("Year");
+        }
+       
     </div>
 
 </div>

@@ -4,13 +4,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<LandView> list = ViewBag.List;
     LandViewParameter Parameter = ViewBag.Parameter;
+    int serial = 1;
 }
 
 <div class="page-header">
     <h2>
         &nbsp;供地信息管理&nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="btn btn-primary" href="/Land/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加供地信息</a>
-        <a class="btn btn-primary" href="/Land/File" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-file"></i>导入Excel文件</a>
+        @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+        {
+            <a class="btn btn-primary" href="/Land/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加供地信息</a>
+            <a class="btn btn-success" href="/Land/File" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-file"></i>导入Excel文件</a>
+        }
+    
     </h2>
 </div>
 
@@ -30,7 +35,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.Name)?"success":"default")" name="Name">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.Name)?"primary":"default")" name="Name">全部</button>
                                 </div>
                                 <input type="text" name="Name" placeholder="项目名称关键字" class="form-control" value="@(Parameter.Name)" />
                             </div>
@@ -41,7 +46,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.sName)?"success":"default")" name="sName">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.sName)?"primary":"default")" name="sName">全部</button>
                                 </div>
                                 <input type="text" name="sName" placeholder="受让人关键字" class="form-control" value="@(Parameter.sName)" />
                             </div>
@@ -52,7 +57,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.Number)?"success":"default")" name="Number">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.Number)?"primary":"default")" name="Number">全部</button>
                                 </div>
                                 <input type="text" name="Number" placeholder="电子监管号关键字" class="form-control" value="@(Parameter.Number)" />
                             </div>
@@ -63,7 +68,7 @@
                         <div class="col-md-12">
                             <div class="input-group input-group-sm" role="group">
                                 <div class="input-group-btn">
-                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.ContractNumber)?"success":"default")" name="ContractNumber">全部</button>
+                                    <button type="button" class="btn btn-@(string.IsNullOrEmpty(Parameter.ContractNumber)?"primary":"default")" name="ContractNumber">全部</button>
                                 </div>
                                 <input type="text" name="ContractNumber" placeholder="合同编号关键字" class="form-control" value="@(Parameter.ContractNumber)" />
                             </div>
@@ -77,6 +82,18 @@
                                 @foreach(SoldWay way in Enum.GetValues(typeof(SoldWay)))
                                 {
                                     <option value="@(way)" @(Parameter.Way.HasValue&&Parameter.Way.Value==way?"selected=selected":"")>@(way.GetDescription())</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">&nbsp;排序方式：</label>
+                        <div class="col-md-12">
+                            <select name="Order" class="form-control">
+                                <option value="" @(Parameter.Order.HasValue?"":"selected=selected")>请选择</option>
+                                @foreach(LandOrder order in Enum.GetValues(typeof(LandOrder)))
+                                {
+                                    <option value="@(order)" @(Parameter.Order.HasValue&&Parameter.Order.Value==order?"selected=selected":"")>@(order.GetDescription())</option>
                                 }
                             </select>
                         </div>
@@ -99,20 +116,26 @@
         <table class="table table-hover table-striped table-condensed">
             <thead>
                 <tr>
+                    <th>序号</th>
                     <th>项目名称</th>
                     <th>受让人</th>
-                    <th>电子监管号</th>
+                    @*<th>电子监管号</th>*@
                     <th>合同编号</th>
-                    <th>宗地编号</th>
+                    @*<th>宗地编号</th>*@
                     <th>供应方式</th>
-                    <th>批准文号</th>
-                    <th>操作</th>
+                    @*<th>批准文号</th>*@
+                    @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                    {
+                        <th>操作</th>
+                    }
+                 
                 </tr>
             </thead>
             <tbody>
                 @foreach(var item in list)
                 {
                     <tr>
+                        <td>@(serial++)</td>
                         <td>
                             <a href="/Land/Detail?id=@(item.ID)">
                                 @if (!string.IsNullOrEmpty(item.Name) && item.Name.Length > 20)
@@ -126,17 +149,34 @@
                           
                             </a> 
                         </td>
-                        <td><a href="@(item.SystemData==SystemData.Enterprise?"/Enterprise/Detail?id="+item.ELID:"/Lawyer/Detail?id="+item.ELID)">@(item.sName)</a> </td>
-                        <td>@(item.Number)</td>
-                        <td>@(item.ContractNumber)</td>
-                        <td>@(item.LandNumber)</td>
-                        <td>@(item.Way.HasValue?item.Way.Value.GetDescription():"")</td>
-                        <td>@(item.Code)</td>
                         <td>
-                            <a href="/Conduct/Save?LandID=@(item.ID)" class="btn btn-warning btn-xs"data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入诚信记录</a>
-                            <a href="/Land/Create?id=@(item.ID)" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
-                            <a href="/Land/Delete?id=@(item.ID)" class="btn btn-danger btn-xs" name="Delete"><i class="glyphicon glyphicon-remove-circle"></i>删除</a>
+                            <a href="@(item.SystemData==SystemData.Enterprise?"/Enterprise/Detail?id="+item.ELID:"/Lawyer/Detail?id="+item.ELID)">
+                                @if (!string.IsNullOrEmpty(item.sName) && item.sName.Length > 20)
+                                {
+                                    <abbr title="@(item.sName)">@(item.sName.Substring(0,20))</abbr>
+                                }
+                                else
+                                {
+                                    @(item.sName)
+                                }
+                       
+                            </a> 
                         </td>
+                        @*<td>@(item.Number)</td>*@
+                        <td>@(item.ContractNumber)</td>
+                        @*<td>@(item.LandNumber)</td>*@
+                        <td>@(item.Way.HasValue?item.Way.Value.GetDescription():"")</td>
+                        @*<td>@(item.Code)</td>*@
+
+                        @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                        {
+                            <td>
+                                <a href="/Conduct/Save?LandID=@(item.ID)" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入诚信记录</a>
+                                <a href="/Land/Create?id=@(item.ID)" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
+                                <a href="/Land/Delete?id=@(item.ID)" class="btn btn-danger btn-xs" name="Delete"><i class="glyphicon glyphicon-remove-circle"></i>删除</a>
+                            </td>
+                        }
+                     
                     </tr>
                 }
             </tbody>

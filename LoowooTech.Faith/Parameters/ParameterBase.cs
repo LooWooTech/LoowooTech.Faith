@@ -22,5 +22,6 @@ namespace LoowooTech.Faith.Parameters
                 return string.Format("{0}分{1}秒", span.Minutes, span.Seconds);
             }
         }
+        public int ? CityID { get; set; }
     }
 }

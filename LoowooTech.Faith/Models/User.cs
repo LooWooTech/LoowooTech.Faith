@@ -31,23 +31,25 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         
         public UserRole Role { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string TelPhone { get; set; }
+
         public bool Approve { get; set; }
         [NotMapped]
         public string AccessToken { get; set; }
+        public int CityID { get; set; }
     }
 
     public enum UserRole
     {
         [Description("游客")]
         Guest,
-        [Description("审核")]
-        Manager,
         [Description("普通用户")]
         Common,
-        [Description("自然人")]
-        Lawyer,
-        [Description("企业")]
-        Enterprise,
+        [Description("审核")]
+        Manager,
         [Description("管理员")]
         Administrator
     }

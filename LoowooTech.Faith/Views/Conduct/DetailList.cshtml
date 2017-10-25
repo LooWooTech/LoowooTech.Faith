@@ -6,7 +6,11 @@
 
 <h3>&nbsp;诚信记录</h3>
 
-<a href="/Conduct/Save?LandID=@(landID)" class="btn btn-primary" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入诚信记录</a>
+@if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+{
+    <a href="/Conduct/Save?LandID=@(landID)" class="btn btn-primary" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入诚信记录</a>
+}
+
 <hr />
 <table class="table table-striped table-bordered">
     <thead>
@@ -18,7 +22,12 @@
             <th>扣分</th>
             <th>状态</th>
             <th>录入人员</th>
-            <th>操作</th>
+            <th>资料</th>
+            @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+            {
+                <th>操作</th>
+            }
+           
         </tr>
     </thead>
     <tbody>
@@ -33,12 +42,31 @@
                 <td>@(item.State.HasValue?item.State.Value.GetDescription():"草稿")</td>
                 <td>@(item.UserName)</td>
                 <td>
-                    @if (!item.State.HasValue || item.State.Value == BaseState.DisAgree)
+                    <a class="btn btn-success btn-xs" href="/File/DetailWindows?sid=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-eye-open"></i>查看资料</a>
+                    @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
                     {
-                        <a class="btn btn-success btn-xs" href="/FlowNode/Create?infoId=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-upload"></i>提交审核</a>
-                        <a class="btn btn-primary btn-xs" href="/Conduct/save?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
+                        if (item.State.HasValue && (item.State.Value == BaseState.Argee || item.State.Value == BaseState.Relieve))
+                        {
+                            <a class="btn btn-default btn-xs" href="/File/Create?sid=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入资料</a>
+                        }
+
+                        <a class="btn btn-primary btn-xs" href="/File/Edit?sid=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>资料管理</a>
                     }
                 </td>
+                @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                {
+                    <td>
+                        @if (!item.State.HasValue || item.State.Value == BaseState.DisAgree)
+                    {
+                            <a class="btn btn-success btn-xs" href="/FlowNode/Create?infoId=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-upload"></i>提交审核</a>
+                            <a class="btn btn-primary btn-xs" href="/Conduct/save?id=@(item.ID)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
+                        }
+
+                 
+
+                    </td>
+                }
+             
             </tr>
         }
     </tbody>

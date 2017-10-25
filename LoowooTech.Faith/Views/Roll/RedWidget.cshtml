@@ -1,0 +1,36 @@
+﻿@{ 
+    Layout = null;
+    List<RollList> list = ViewBag.List;
+}
+
+<div class="panel panel-warning">
+    <div class="panel-heading">
+        <i class="fa fa-question"></i>
+        <a href="/Roll/Red" class="btn btn-xs btn-warning">异常名单</a> 
+        <span class="label label-warning pull-right">@(list.Count)</span>
+    </div>
+    <ul class="list-unstyled m-t-md list-group">
+        @foreach (var item in list.Take(5))
+        {
+            <li class="list-group-item"><a href="@(item.SystemData==SystemData.Enterprise?"/Enterprise/Detail?id="+item.DataId:"/Lawyer/Detail?id="+item.DataId)" class="text-muted">@(item.Name)</a> </li>
+        }
+    </ul>
+</div>
+
+@*<div class="widget yellow-bg">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <i class="fa fa-question fa-5x"></i>
+            <h2>异常名单</h2>
+        </div>
+        <div class="col-md-8 text-right">
+            <ul class="list-unstyled m-t-md">
+                @foreach (var item in list)
+                {
+                    <li>@(item.Name)</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+</div>*@

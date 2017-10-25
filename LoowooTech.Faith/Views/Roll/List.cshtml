@@ -10,20 +10,36 @@
         <tr>
             <th>序号</th>
             <th>名称</th>
+            @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+            {
+                <th>告知书</th>
+                <th>认定书</th>
+            }
+         
         </tr>
     </thead>
     <tbody>
         @foreach(var item in list)
         {
             <tr>
-                <td>@(serial++)</td>
+                <td>@(serial)</td>
                 <td>
                     <a href="@(item.SystemData==SystemData.Enterprise?"/Enterprise/Detail?id="+item.DataId:"/Lawyer/Detail?id="+item.DataId)">
                         @(item.Name)
                     </a> 
-                
                 </td>
+                @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                {
+                    <td>
+                        <a href="/Roll/DownloadBook?number=@(serial)&&book=@(Book.Notification)&&dataid=@(item.DataId)&&systemdata=@(item.SystemData)" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载</a>
+                    </td>
+                    <td>
+                        <a href="/Roll/DownloadBook?number=@(serial)&&book=@(Book.Protocol)&&dataid=@(item.DataId)&&systemdata=@(item.SystemData)" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载</a>
+                    </td>
+                }
+             
             </tr>
+            serial++;
         }
     </tbody>
 </table>

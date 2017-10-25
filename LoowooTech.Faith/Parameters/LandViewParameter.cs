@@ -1,6 +1,7 @@
 ﻿using LoowooTech.Faith.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -15,6 +16,17 @@ namespace LoowooTech.Faith.Parameters
         public string Number { get; set; }
         public string ContractNumber { get; set; }
         public SoldWay? Way { get; set; }
+        public LandOrder? Order { get; set; }
 
+    }
+
+    public enum LandOrder
+    {
+        [Description("项目名称")]
+        Name,
+        [Description("受让人")]
+        sName,
+        [Description("合同编号")]
+        ContractNumber,
     }
 }

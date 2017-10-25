@@ -13,7 +13,7 @@ namespace LoowooTech.Faith.Common
 
         public static string GenerateToken(this HttpContextBase context,User user)
         {
-            var ticket = new FormsAuthenticationTicket(1, user.ID + "|" + user.UserName + "|" + user.Name+"|"+user.Role, DateTime.Now, DateTime.MaxValue, true, "user_token");
+            var ticket = new FormsAuthenticationTicket(1, user.ID + "|" + user.UserName + "|" + user.Name+"|"+user.Role+"|"+user.TelPhone, DateTime.Now, DateTime.MaxValue, true, "user_token");
             var token = FormsAuthentication.Encrypt(ticket);
             return token;
         }
@@ -49,7 +49,7 @@ namespace LoowooTech.Faith.Common
                 if (ticket != null && !string.IsNullOrEmpty(ticket.Name))
                 {
                     var values = ticket.Name.Split('|');
-                    if (values.Length == 4)
+                    if (values.Length == 5)
                     {
                         UserRole role;
                         Enum.TryParse<UserRole>(values[3], out role);
@@ -58,8 +58,9 @@ namespace LoowooTech.Faith.Common
                             UserID = int.Parse(values[0]),
                             Name = values[2],
                             DisplayName = values[1],
-                            Role=role
-                        }; ;
+                            Role=role,
+                            TelPhone=values[4]
+                        };
                     }
                 }
             }

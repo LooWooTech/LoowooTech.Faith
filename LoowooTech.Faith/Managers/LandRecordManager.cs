@@ -19,6 +19,7 @@ namespace LoowooTech.Faith.Managers
         {
             Db.LandRecords.Add(landRecord);
             Db.SaveChanges();
+            Grade(landRecord, GradeAction.AddLandRecord);
             return landRecord.ID;
         }
 
@@ -38,7 +39,7 @@ namespace LoowooTech.Faith.Managers
             }
             Db.Entry(model).CurrentValues.SetValues(landRecord);
             Db.SaveChanges();
-
+            Grade(model, GradeAction.EditLandRecord);
             return true;
         }
         /// <summary>
@@ -74,6 +75,7 @@ namespace LoowooTech.Faith.Managers
 
             Db.LandRecords.Remove(model);
             Db.SaveChanges();
+            Grade(model, GradeAction.DeleteLandRecord);
             return true;
         }
 
@@ -82,9 +84,51 @@ namespace LoowooTech.Faith.Managers
             var list = Db.LandRecords.Where(e => e.ELID == ELID && e.SystemData == systemData).ToList();
             return list;
         }
-        public long Count()
+        public long Count(int cityID)
         {
-            return Db.LandRecords.LongCount();
+            return Db.LandRecordViews.Where(e=>e.CityID==cityID).LongCount();
+        }
+
+        public void Grade(LandRecord record,GradeAction action)
+        {
+            if (record.SystemData == SystemData.Enterprise)
+            {
+                Core.EnterpriseManager.Grade(record.ELID, record.ID, action);
+            }else if (record.SystemData == SystemData.Lawyer)
+            {
+                Core.LawyerManager.Grade(record.ELID, record.ID, action);
+            }
+        }
+        public bool Relieve(int id,string remark)
+        {
+            if (id <= 0)
+            {
+                return false;
+            }
+            var model = Db.LandRecords.Find(id);
+            if (model == null)
+            {
+                return false;
+            }
+            model.State = LandRecordState.Relieve;
+            if (!string.IsNullOrEmpty(remark))
+            {
+                model.Remark += string.Format("解除备注：{0}", remark);
+            }
+           
+            Db.SaveChanges();
+            return true;
+        }
+        public bool CancelRelieve(int id)
+        {
+            var model = Db.LandRecords.Find(id);
+            if (model == null)
+            {
+                return false;
+            }
+            model.State = LandRecordState.Enter;
+            Db.SaveChanges();
+            return true;
         }
     }
 }

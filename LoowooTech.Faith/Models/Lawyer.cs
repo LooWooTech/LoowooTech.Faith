@@ -11,9 +11,9 @@ namespace LoowooTech.Faith.Models
     [Table("lawyer")]
     public class Lawyer:Subject
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int ID { get; set; }
 
         public Sex Sex { get; set; }
         public string BornTime { get; set; }
@@ -23,6 +23,7 @@ namespace LoowooTech.Faith.Models
         public string TelPhone { get; set; }
         public string EMail { get; set; }
         public int? EnterpriseID { get; set; }
+        public int CityID { get; set; }
     }
 
     public enum Sex
@@ -30,9 +31,7 @@ namespace LoowooTech.Faith.Models
         [Description("男")]
         Male,
         [Description("女")]
-        Female,
-        [Description("其他")]
-        Other
+        Female
     }
 
     public enum Credential

@@ -7,8 +7,13 @@
 <div class="page-header">
     <h2>
         &nbsp;诚信行为&nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="btn btn-primary" href="/Conduct/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加诚信行为信息</a>
-        <a class="btn btn-primary" href="/Conduct/File" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-file"></i>导入Excel文件</a>
+        @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+        {
+            <a class="btn btn-primary" href="/Conduct/Create" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加诚信行为信息</a>
+            <a class="btn btn-success" href="/Conduct/File" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-file"></i>导入Excel文件</a>
+            <a class="btn btn-info" href="/Conduct/Download"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载诚信行为数据文件</a>
+        }
+      
     </h2>
 </div>
 

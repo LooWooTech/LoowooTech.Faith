@@ -19,6 +19,15 @@
             });
         });
 
+        $("Select[name='StandardId']").change(function () {
+            var val = $(this).val();
+            $.getJSON("/Conduct/GetScore?id=" + val, null, function (data) {
+                $("input[name='Score']").val(data.Score);
+                $("input[name='Degree']").val(data.Degree);
+            });
+
+        });
+
         $("#Conduct-form").submit(function () {
             var button = $("#Conduct-form button[type='submit']");
             button.text("正在保存......").attr("disabled", "disabled");
@@ -39,7 +48,11 @@
     });
 </script>
 
-<h3 class="text-center">&nbsp;录入诚信记录</h3>
+<div class="page-header">
+    <h3 class="text-center">&nbsp;录入诚信记录</h3>
+</div>
+
+
 <form class="form-horizontal" action="" method="post" id="Conduct-form">
     <div class="row">
         <div class="col-md-12">
@@ -62,7 +75,7 @@
                     <input type="text" class="form-control" value="@(land!=null?land.sName:"未获取供地信息，请刷新")" readonly />
                 </div>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label class="control-label col-md-4">诚信行为等级：</label>
                 <div class="col-md-7">
                     <select name="Degree" class="form-control">
@@ -74,7 +87,7 @@
                     </select>
 
                 </div>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label class="control-label col-md-4">环节：</label>
                 <div class="col-md-7">
@@ -106,6 +119,12 @@
                 <label class="control-label col-md-4">分值：</label>
                 <div class="col-md-7">
                     <input type="text" name="Score" class="form-control" placeholder="分值" value="@(conduct!=null?conduct.Score.ToString():"")" />
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <label class="control-label col-md-4">诚信行为等级：</label>
+                <div class="col-md-7">
+                    <input type="text" name="Degree" class="form-control" placeholder="诚信行为等级" value="" readonly />
                 </div>
             </div>
             <div class="form-group">

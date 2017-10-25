@@ -1,0 +1,62 @@
+﻿@{ 
+    Layout = null;
+    GradeHistory grade = ViewBag.Model;
+}
+
+<script>
+    $(function () {
+        $("#grade-form").submit(function () {
+            var data = $(this).serialize();
+            var btn = $("#grade-form button");
+            btn.attr("disabled", "disabled");
+            var href = $(this).attr("action");
+            ShowMessage("正在创建录入中，请勿关闭窗口，请稍等......");
+            $.request(href, data, function (json) {
+                if (json.result == 0) {
+                    ShowErrorMessage(json.content);
+                    btn.removeAttr("disabled");
+                } else {
+                    alert("成功评级");
+                    location.href = "/Grade/Index";
+                    $("#Modal").modal("hide");
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+<div class="page-header">
+    <h3 class="text-center">计算信用评级信息</h3>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @{ 
+            Html.RenderPartial("_Message");
+        }
+        <form class="form-horizontal" action="/Grade/Save" method="post" id="grade-form">
+            <input type="hidden" name="ID" value="@(grade!=null?grade.ID:0)" />
+            <div class="form-group">
+                <label class="control-label col-md-3">名称：</label>
+                <div class="col-md-7">
+                    <input type="text" name="Name" class="form-control" placeholder="名称" value="@(grade!=null?grade.Name:string.Format("{0}年度",DateTime.Now.Year))" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">备注信息：</label>
+                <div class="col-md-7">
+                    <textarea name="Description" class="form-control" rows="3">@(grade!=null?grade.Description:"")</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-7 col-md-offset-3">
+                    <button class="btn btn-primary" type="submit"><i class="glyphicon glyphicon-ok-circle"></i>&nbsp;确定</button> 
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove-circle"></i>&nbsp; 取消</button>             
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

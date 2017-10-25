@@ -1,0 +1,56 @@
+﻿@{ 
+    Layout = null;
+    LandRecordView record = ViewBag.Model;
+}
+
+<script>
+    $(function () {
+        $("#Relieve-form").submit(function () {
+            var btn = $("#relieve-form button[type='submit']");
+            btn.attr("disabled", "disabled");
+            var data = $(this).serialize();
+            $.request("/LandRecord/Relieve", data, function (json) {
+                if (json.result == 0) {
+                    alert(json.content);
+                    btn.removeAttr("disabled");
+                } else {
+                    alert("成功解除");
+                    location.href = "/LandRecord/Index";
+                }
+            });
+            return false;
+        });
+    })
+</script>
+
+<div class="page-header">
+    <h3 class="text-center">违法用地记录解除</h3>
+</div>
+
+<form method="post" class="form-horizontal" id="Relieve-form">
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;违法企业/自然人名称：</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" value="@(record.ELName)" readonly />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;查处文号：</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" value="@(record.Code)" readonly />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;解除备注：</label>
+        <div class="col-md-7">
+            <input type="hidden" name="ID" value="@(record.ID)" />
+            <textarea name="Remark" rows="3" class="form-control"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-7 col-md-offset-4">
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;解除</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>&nbsp; 取消</button>
+        </div>
+    </div>
+</form>

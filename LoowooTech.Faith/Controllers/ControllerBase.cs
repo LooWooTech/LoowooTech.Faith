@@ -1,5 +1,6 @@
 ﻿using LoowooTech.Faith.Common;
 using LoowooTech.Faith.Managers;
+using LoowooTech.Faith.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Web.Mvc;
 namespace LoowooTech.Faith.Controllers
 {
  
-   // [UserAuthorize]
+    [UserAuthorize]
     public class ControllerBase : AsyncController
     {
         protected ManagerCore Core = ManagerCore.Instance;
@@ -19,6 +20,8 @@ namespace LoowooTech.Faith.Controllers
         {
             get { return (UserIdentity)HttpContext.User.Identity; }
         }
+        private City _city { get; set; }
+        public City City { get { return _city == null ? _city = Core.CityManager.Get(SystemManager.District) : _city; } }
         protected ActionResult SuccessJsonResult(object data = null)
         {
             return new ContentResult { Content = new { result = 1, content = "操作成功", data }.ToJson(), ContentEncoding = System.Text.Encoding.UTF8, ContentType = "text/json" };

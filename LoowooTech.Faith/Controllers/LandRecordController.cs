@@ -23,7 +23,29 @@ namespace LoowooTech.Faith.Controllers
                 ELName = ELName,
                 MinScore = minScore,
                 MaxScore = maxScore,
+                CityID=City.ID,
                 Page = new PageParameter(page, rows)
+            };
+            try
+            {
+                var list = Core.LandRecordViewManager.Search(parameter);
+                ViewBag.List = list;
+                ViewBag.Parameter = parameter;
+            }
+            catch(Exception ex)
+            {
+                throw new ArgumentException(ex.ToString());
+            }
+     
+            return View();
+        }
+
+        public ActionResult Widget()
+        {
+            var parameter = new LandRecordViewParameter
+            {
+                CityID=City.ID,
+                Page = new PageParameter(1, 5)
             };
             var list = Core.LandRecordViewManager.Search(parameter);
             ViewBag.List = list;
@@ -112,9 +134,34 @@ namespace LoowooTech.Faith.Controllers
                 throw new ArgumentException("请选择上传文件");
             }
             var filePath = FileManager.Upload(file);
-            var list = ExcelManager.AnalyzeLandRecord(filePath);
+            var list = ExcelManager.AnalyzeLandRecord(filePath,City.ID);
             Core.LandRecordViewManager.AddRange(list,Identity.UserID);
             return RedirectToAction("Index");
+        }
+        public ActionResult Relieve(int id)
+        {
+            var model = Core.LandRecordViewManager.Get(id);
+            ViewBag.Model = model;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Relieve(int id,string remark)
+        {
+            if (!Core.LandRecordManager.Relieve(id, remark))
+            {
+                return ErrorJsonResult("解除违法用地失败，未找到违法用地相关信息");
+            }
+            return SuccessJsonResult();
+        }
+
+        public ActionResult CancelRelieve(int id)
+        {
+            if (!Core.LandRecordManager.CancelRelieve(id))
+            {
+                return ErrorJsonResult("取消解除失败，未找到违法用地相关信息");
+            }
+            return SuccessJsonResult();
         }
     }
 }

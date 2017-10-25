@@ -1,8 +1,10 @@
 ﻿@{ 
     Layout = null;
 }
+<div class="page-header">
+    <h3 class="text-center">导入自然人文件</h3>
+</div>
 
-<h3 class="text-center">导入自然人文件</h3>
 <form class="form-horizontal" action="/Lawyer/analyzefile" method="post" enctype="multipart/form-data" id="file">
     @{ 
         Html.RenderPartial("_Message");

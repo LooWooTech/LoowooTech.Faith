@@ -9,14 +9,13 @@ using System.Web.Mvc;
 
 namespace LoowooTech.Faith.Controllers
 {
-    [UserAuthorize]
     public class LandController : ControllerBase
     {
         // GET: Land
         public ActionResult Index(
             string name=null,string sName=null,
             string number=null,string contractNumber=null,
-            SoldWay? way=null, int page=1,int rows=20)
+            SoldWay? way=null,LandOrder? order=null, int page=1,int rows=20)
         {
             var parameter = new LandViewParameter
             {
@@ -25,7 +24,23 @@ namespace LoowooTech.Faith.Controllers
                 Number=number,
                 ContractNumber=contractNumber,
                 Way=way,
+                CityID=City.ID,
+                Order=order,
                 Page = new PageParameter(page, rows)
+            };
+            var list = Core.LandManager.Search(parameter);
+            ViewBag.List = list;
+            ViewBag.Parameter = parameter;
+            return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult Widget()
+        {
+            var parameter = new LandViewParameter
+            {
+                CityID=City.ID,
+                Page = new PageParameter(1, 5)
             };
             var list = Core.LandManager.Search(parameter);
             ViewBag.List = list;
@@ -89,7 +104,7 @@ namespace LoowooTech.Faith.Controllers
             }
             var filePath = FileManager.Upload(file);
             var list = ExcelManager.AnalyzeLand(filePath);
-            Core.LandManager.AddRange(list, Identity.UserID);
+            Core.LandManager.AddRange(list, Identity.UserID,City.ID);
             try
             {
               

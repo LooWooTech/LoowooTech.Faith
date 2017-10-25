@@ -1,0 +1,21 @@
+﻿@{ 
+    Layout = null;
+    List<RollList> list = ViewBag.List;
+}
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <i class="fa fa-ban"></i>
+        <a href="/Roll/Black" class="btn btn-xs btn-success"> &nbsp;黑名单</a>
+       <span class="label label-success pull-right">@(list.Count)</span>
+    </div>
+
+    <ul class="list-unstyled m-t-md list-group">
+        @foreach (var item in list.Take(5))
+        {
+            <li class="list-group-item"><a href="@(item.SystemData==SystemData.Enterprise?"/Enterprise/Detail?id="+item.DataId:"/Lawyer/Detail?id="+item.DataId)" class="text-muted">@(item.Name)</a> </li>
+        }
+    </ul>
+</div>
+
+

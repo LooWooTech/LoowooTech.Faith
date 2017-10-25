@@ -18,14 +18,17 @@ namespace LoowooTech.Faith.Managers
             return model;
         }
 
-        public List<EnterpriseScore> GetEnterprise()
+        public List<EnterpriseScore> GetEnterprise(int cityID)
         {
-            return Db.EnterpriseScores.Where(e => e.Deleted == false).ToList();
+            return Db.EnterpriseScores.Where(e => e.Deleted == false&&e.CityID==cityID).ToList();
+        }
+        
+
+
+        public List<LawyerScore> GetLawyer(int cityID)
+        {
+            return Db.LawyerScores.Where(e => e.Deleted == false&&e.CityID==cityID).ToList();
         }
 
-        public List<LawyerScore> GetLawyer()
-        {
-            return Db.LawyerScores.Where(e => e.Deleted == false).ToList();
-        }
     }
 }

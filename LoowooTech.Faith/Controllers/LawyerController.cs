@@ -29,6 +29,7 @@ namespace LoowooTech.Faith.Controllers
                 Email=email,
                 Degree=degree,
                 Deleted=false,
+                CityID=City.ID,
                 Page = new PageParameter(page, rows)
             };
             if (!string.IsNullOrEmpty(sex))
@@ -39,6 +40,20 @@ namespace LoowooTech.Faith.Controllers
             ViewBag.List = list;
             ViewBag.Parameter = parameter;
             ViewBag.Page = parameter.Page;
+            return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult Widget()
+        {
+            var parameter = new LawyerParameter
+            {
+                CityID = City.ID,
+                Page = new PageParameter(1, 5)
+            };
+            var list = Core.LawyerManager.Search(parameter);
+            ViewBag.List = list;
+            ViewBag.Parameter = parameter;
             return View();
         }
 
@@ -64,6 +79,7 @@ namespace LoowooTech.Faith.Controllers
             {
                 return ErrorJsonResult("未获取自然人信息");
             }
+            lawyer.CityID = City.ID;
             if (lawyer.ID > 0)
             {
                 if (!Core.LawyerManager.Edit(lawyer))
@@ -100,7 +116,7 @@ namespace LoowooTech.Faith.Controllers
                 throw new ArgumentException("请选择上传文件");
             }
             var filePath = FileManager.Upload(file);
-            var list = ExcelManager.AnalyzeLawyer(filePath);
+            var list = ExcelManager.AnalyzeLawyer(filePath,City.ID);
             Core.LawyerManager.AddRange(list, Identity.UserID);
             return RedirectToAction("Index");
         }
@@ -124,10 +140,10 @@ namespace LoowooTech.Faith.Controllers
         [HttpPost]
         public ActionResult Delete(int id,string remark)
         {
-            //if (Core.LawyerManager.Used(id))
-            //{
-            //    return ErrorJsonResult("删除失败，当前自然人已经管理诚信行为以及违法用地记录");
-            //}
+            if (Core.LawyerManager.Used(id))
+            {
+                return ErrorJsonResult("删除失败，当前自然人已经管理诚信行为以及违法用地记录");
+            }
             if (!Core.LawyerManager.Delete(id,remark))
             {
                 return ErrorJsonResult("删除失败，未找到删除ID");

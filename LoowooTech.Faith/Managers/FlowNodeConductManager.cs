@@ -49,9 +49,9 @@ namespace LoowooTech.Faith.Managers
             return model;
         }
 
-        public List<FlowNodeConduct> SearchHistory(PageParameter page)
+        public List<FlowNodeConduct> SearchHistory(PageParameter page,int CityId)
         {
-            var query = Db.FlowNodeConducts.Where(e => e.FlowNodeState != DoingState.None).AsQueryable();
+            var query = Db.FlowNodeConducts.Where(e => e.FlowNodeState != DoingState.None&&e.CityId==CityId).AsQueryable();
             query = query.OrderByDescending(e => e.CreateTime).SetPage(page);
             return query.ToList();
         }

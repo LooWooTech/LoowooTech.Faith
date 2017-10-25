@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title-@(SystemManager.Title)</title>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/switchery.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/morris.css" />
+
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/jquery.circliful.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/icons.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Mi/style.css" />
+
+
+   
+
+  
+
+    <script src="~/Content/Mi/modernizr.min.js"></script>
+    <script>
+        var resizefunc = [];
+    </script>
+
+    @*<script src="~/Content/Mi/jquery.nicescroll.js"></script>
+    <script src="~/Content/Mi/jquery.scrollTo.min.js"></script>
+    <script src="~/Content/Mi/switchery.min.js"></script>
+    <script src="~/Content/Mi/jquery.waypoints.min.js"></script>
+    <script src="~/Content/Mi/jquery.counterup.min.js"></script>
+    <script src="~/Content/Mi/jquery.circliful.min.js"></script>
+    <script src="~/Content/Mi/jquery.sparkline.min.js"></script>
+    <script src="~/Content/Mi/skycons.min.js"></script>
+    <script src="~/Content/Mi/jquery.dashboard.js"></script>*@
+
+
+    <script src="~/Content/Mi/jquery.min.js"></script>
+    <script src="~/Content/Mi/popper.min.js"></script>
+    <script src="~/Content/Mi/bootstrap.min.js"></script>
+    <script src="~/Content/Mi/detect.js"></script>
+    <script src="~/Content/Mi/fastclick.js"></script>
+    <script src="~/Content/Mi/jquery.slimscroll.js"></script>
+    <script src="~/Content/Mi/jquery.blockUI.js"></script>
+    <script src="~/Content/Mi/waves.js"></script>
+    <script src="~/Content/Mi/wow.min.js"></script>
+    <script src="~/Content/Mi/jquery.nicescroll.js"></script>
+    <script src="~/Content/Mi/jquery.scrollTo.min.js"></script>
+    <script src="~/Content/Mi/switchery.min.js"></script>
+    <script src="~/Content/Mi/jquery.core.js"></script>
+    <script src="~/Content/Mi/jquery.app.js"></script>
+
+
+
+    <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('.counter').counterUp({
+                    delay: 100,
+                    time: 1200
+                });
+                $('.circliful-chart').circliful();
+            });
+
+            // BEGIN SVG WEATHER ICON
+            if (typeof Skycons !== 'undefined'){
+                var icons = new Skycons(
+                        {"color": "#00b19d"},
+                        {"resizeClear": true}
+                        ),
+                        list  = [
+                            "clear-day", "clear-night", "partly-cloudy-day",
+                            "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
+                            "fog"
+                        ],
+                        i;
+
+                for(i = list.length; i--; )
+                    icons.set(list[i], list[i]);
+                icons.play();
+            };
+
+    </script>
+    <style type="text/css">
+        .jqstooltip {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            visibility: hidden;
+            background: rgb(0, 0, 0) transparent;
+            background-color: rgba(0,0,0,0.6);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+            white-space: nowrap;
+            padding: 5px;
+            border: 1px solid white;
+            z-index: 10000;
+        }
+
+        .jqsfield {
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+        }
+    </style>
+
+
+    <script>
+        $(function () {
+            $("#Modal").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+
+            $('[data-toggle="popover"]').popover();
+        })
+    </script>
+
+</head>
+<body class="fixed-left widescreen">
+    <div id="wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="text-center">
+                    <a href="#" class="logo"><i class="fa fa-tree"></i><span>土地市场诚信系统</span></a>
+                </div>
+            </div>
+            <nav class="navbar-custom">
+                <ul class="list-inline float-right mb-0">
+                    <li class="list-inline-item dropdown notification-list">
+                        <a class="nav-link dropdown-toggle waves-effect waves-light nav-user" data-toggle="dropdown" href="" role="button" aria-haspopup="false" aria-expanded="false">
+                            <img src="~/Images/User.png" alt="user" class="rounded-circle">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-dropdown " aria-labelledby="Preview">
+                            <!-- item-->
+                            <div class="dropdown-item noti-title">
+                                <h5 class="text-overflow"><small>Welcome ! @(Identity.DisplayName)</small> </h5>
+                            </div>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <i class="mdi mdi-account-star-variant"></i> <span>Profile</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <i class="mdi mdi-settings"></i> <span>Settings</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <i class="mdi mdi-lock-open"></i> <span>Lock Screen</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <i class="glyphicon glyphicon-log-out"></i> <span>退出系统</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="list-inline menu-left mb-0">
+                    <li class="float-left">
+                        <button class="button-menu-mobile open-left waves-light waves-effect">
+                            <i class="fa fa-navicon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="left side-menu">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 851px;">
+                <div class="sidebar-inner slimscrollleft" style="overflow: hidden; width: auto; height: 851px;">
+                    <!--- Divider -->
+                    <div id="sidebar-menu">
+                        <ul>
+                            <li class="menu-title">欢迎页</li>
+                            <li><a href="/Home/Index2" class="waves-effect waves-primary"><i class="fa fa-home"></i><span>首页</span></a></li>
+                            <li class="menu-title">用地主体</li>
+                            <li><a href="/Enterprise" class="waves-effect waves-primary"><i class="fa fa-briefcase"></i><span>企业管理</span></a></li>
+                            <li><a href="/Lawyer" class="waves-effect waves-primary"><i class="fa fa-user"></i><span>自然人管理</span></a></li>
+                            <li class="menu-title">诚信</li>
+                            <li><a href="/Land" class="waves-effect waves-primary"><i class="fa fa-map-marker"></i><span>供地信息管理</span></a></li>
+                            <li><a href="/LandRecord" class="waves-effect waves-primary"><i class="fa fa-info"></i><span>违法用地管理</span></a></li>
+                            <li><a href="/Conduct" class="waves-effect waves-primary"><i class="fa fa-credit-card"></i><span>诚信行为管理</span></a></li>
+                            <li><a href="/Roll/Black" class="waves-effect waves-primary"><i class="fa fa-ban"></i><span>黑名单</span></a></li>
+                            <li><a href="/Roll/Red" class="waves-effect waves-primary"><i class="fa fa-question"></i><span>异常名单</span></a></li>
+                            <li><a href="/Grade/Index" class="waves-effect waves-primary"><i class="fa fa-leaf"></i><span>信用评级计算</span></a></li>
+                            <li class="menu-title">高级</li>
+                            <li><a href="/FlowNode" class="waves-effect waves-primary"><i class="fa fa-tint"></i><span>审核管理</span></a></li>
+                            <li><a href="/Recycle" class="waves-effect waves-primary"><i class="fa fa-trash"></i><span>回收站</span></a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div><div class="slimScrollBar" style="background: rgb(152, 166, 173); width: 5px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 851px; visibility: visible;"></div><div class="slimScrollRail" style="width: 5px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div>
+            </div>
+        </div>
+
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container-fluid">
+                    <!-- Page-Title -->
+                    @RenderBody();
+
+                    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" id="Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">正在加载...<span aria-hidden="true">&times;</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end container -->
+            </div>
+            <!-- end content -->
+            <footer class="footer">
+                2011 - @(DateTime.Now.Year) © 陆吾科技 <span class="hide-phone">- loowootech.com</span>
+            </footer>
+        </div>
+
+    </div>
+
+    
+</body>
+</html>

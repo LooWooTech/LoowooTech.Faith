@@ -3,7 +3,7 @@
     Standard standard = ViewBag.Model;
 }
 
-<h3 class="text-center">&nbsp; 录入诚信行为</h3>
+<h3 class="text-center">&nbsp; 录入诚信类型</h3>
 <form class="form-horizontal" method="post" action="/System/CreateStandard" id="Standard-form">
     <div class="row">
 
@@ -24,9 +24,38 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-md-4">诚信类型名称:</label>
+                <label class="control-label col-md-4">诚信标准代码：</label>
+                <div class="col-md-7">
+                    <input type="text" name="Code" class="form-control" placeholder="诚信标准代码" value="@(standard!=null?standard.Code:"")" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">诚信标准名称:</label>
                 <div class="col-md-7">
                     <input type="text" name="Name" class="form-control" placeholder="诚信类型名称" value="@(standard!=null?standard.Name:"")" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">名称注释：</label>
+                <div class="col-md-7">
+                    <textarea name="Summary" rows="3" class="form-control">@(standard.Summary)</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">标准应扣分值：</label>
+                <div class="col-md-7">
+                    <input type="text" name="Score" class="form-control" placeholder="标准应扣分值" value="@(standard!=null?standard.Score.ToString():"")" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">诚信等级：</label>
+                <div class="col-md-7">
+                    @foreach(CreditDegree degree in Enum.GetValues(typeof(CreditDegree)))
+                    {
+                        <label class="radio-inline">
+                            <input type="radio" name="Degree" value="@(degree)" @(standard!=null&&standard.Degree==degree?"checked=checked":"") />@(degree.GetDescription())
+                        </label>
+                    }
                 </div>
             </div>
            <br />

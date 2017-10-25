@@ -3,7 +3,7 @@
     Dictionary<Credit, List<Standard>> dict = ViewBag.Dict;
 }
 
-<a class="btn btn-primary" href="/System/CreateStandard" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加诚信行为</a>
+<a class="btn btn-primary" href="/System/CreateStandard" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus"></i>添加诚信类型</a>
 
 <br />
 <br />
@@ -11,7 +11,10 @@
     <thead>
         <tr>
             <th>环节名称</th>
-            <th>诚信行为</th>
+            <th>诚信标准名称</th>
+            <th>诚信等级</th>
+            <th>名称注释</th>
+            <th>标准应扣分制</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -24,7 +27,22 @@
             foreach(var item in entry.Value)
             {
                 <tr>
-                    <td>@(item.Name)</td>
+                    <td>@(item.Name)(@(item.Code))</td>
+                    <td>
+                        <label class="label label-@(item.Degree==CreditDegree.Bad?"danger":item.Degree==CreditDegree.Good?"default":"warning")">@(item.Degree.GetDescription())</label>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Summary) && item.Summary.Length > 20)
+                        {
+                            <abbr title="@(item.Summary)">@(item.Summary.Substring(0,20))</abbr>
+                        }
+                        else
+                        {
+                            @(item.Summary);
+       
+                        }
+                    </td>
+                    <td>@(item.Score)</td>
                     <td>
                         <a class="btn btn-primary btn-xs" href="/System/CreateStandard?id=@(item.ID)"data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>编辑</a>
                         <a class="btn btn-danger btn-xs" href="/System/DeleteStandard?id=@(item.ID)" name="Delete"><i class="glyphicon glyphicon-remove-circle"></i>删除</a>

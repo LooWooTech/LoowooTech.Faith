@@ -12,6 +12,7 @@ namespace LoowooTech.Faith.Models
         /// <summary>
         /// 企业名称/自然人姓名
         /// </summary>
+        [Description("企业名称/自然人名称")]
         public string Name { get; set; }
         public int Good { get; set; }
         public int Less { get; set; }

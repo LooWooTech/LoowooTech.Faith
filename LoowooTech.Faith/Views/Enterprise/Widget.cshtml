@@ -1,0 +1,35 @@
+﻿@{ 
+    Layout = null;
+    List<Enterprise> list = ViewBag.List;
+    EnterpriseParameter parameter = ViewBag.Parameter;
+}
+
+
+<div class="widget p-lg Enterprise text-white">
+    <div class="m-b-md">
+        <div class="row">
+            <div class="col-md-4">
+                <i class="fa fa-briefcase fa-5x"></i>
+            </div>
+            <div class="col-md-8 text-right">
+                <a href="/Enterprise/Index" class="btn btn-outline btn-primary"><h1 class="m-xs font-bold">企业管理</h1></a>
+                <h3 class="font-bold">企业数量： @(parameter.Page.RecordCount)</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<div class="widget-head-color-box p-lg Enterprise text-center">
+    <div class="p-m">
+        <div class="col-md-4 text-navy">
+            <i class="fa fa-briefcase fa-5x"></i>
+        </div>
+        <div class="col-md-8 text-right text-white">
+            <h2 class="font-bold no-margins">企业管理</h2>
+            <small>企业信息管理</small>
+        </div>
+    </div>
+    <div class="flot-chart"></div>
+</div>*@

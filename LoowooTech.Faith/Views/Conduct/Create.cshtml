@@ -7,7 +7,10 @@
     Lawyer lawyer = systemData.HasValue && systemData.Value == SystemData.Lawyer ? ViewBag.Model : null;
 }
 
-<h3 class="text-center">录入诚信行为</h3>
+<div class="page-header">
+    <h3 class="text-center">录入诚信行为</h3>
+</div>
+
 
 <form class="form-horizontal" action="" method="post" id="Conduct-form">
     @{ 
@@ -47,7 +50,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-4">诚信企业/自然人：</label>
                     <div class="col-md-7">
-                        @foreach(SystemData data in Enum.GetValues(typeof(SystemData)))
+                        @foreach (SystemData data in Enum.GetValues(typeof(SystemData)))
                         {
                             <label class="radio-inline">
                                 <input type="radio" name="SystemData" value="@(data)" />@(data.GetDescription())

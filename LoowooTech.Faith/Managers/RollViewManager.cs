@@ -26,27 +26,44 @@ namespace LoowooTech.Faith.Managers
             return query.ToList();
         }
 
-        public long Count(BREnum brnum)
+        public long Count(BREnum brnum,int cityID)
         {
-            return GetRollList(brnum, null).LongCount();
+            return GetRollList(brnum, null,cityID).LongCount();
         }
 
-        public List<RollList> GetRollList(BREnum brenum,string key)
+        public List<RollList> GetRollList(BREnum brenum,string key,int cityID, bool isStandard=false)
         {
-            return GetList(brenum == BREnum.Black ? GradeDegree.D : GradeDegree.C, key);
+            return GetList(brenum == BREnum.Black ? GradeDegree.D : GradeDegree.C, key,isStandard,cityID);
         }
 
-        public List<RollList> GetList(GradeDegree degree,string key)
+        
+
+        public List<RollList> GetList(GradeDegree degree,string key,bool isStandard,int cityID)
         {
             var result = new List<RollList>();
-            result.AddRange(GetEnterprise(degree,key));
-            result.AddRange(GetLawyer(degree, key));
+            result.AddRange(GetEnterprise(degree,key,cityID));
+            result.AddRange(GetLawyer(degree, key,cityID));
+            if (isStandard)
+            {
+                try
+                {
+                    foreach (var item in result)
+                    {
+                        item.ConductStandards = Core.ConductStandardManager.Search(new Parameters.ConductStandardParameter { ELID = item.DataId, SystemData = item.SystemData, State = BaseState.Argee,CityID=cityID });
+                    }
+                }
+                catch(Exception ex)
+                {
+                    throw new ArgumentException(ex.ToString());
+                }
+              
+            }
             return result;
         }
 
-        public List<RollList> GetEnterprise(GradeDegree degree,string key)
+        public List<RollList> GetEnterprise(GradeDegree degree,string key,int cityID)
         {
-            var query = Db.Enterprises.Where(e => e.Deleted == false && e.Degree == degree).AsQueryable();
+            var query = Db.Enterprises.Where(e => e.Deleted == false && e.Degree == degree&&e.CityID==cityID).AsQueryable();
             if (!string.IsNullOrEmpty(key))
             {
                 query = query.Where(e => e.Name.ToLower().Contains(key.ToLower()));
@@ -54,9 +71,9 @@ namespace LoowooTech.Faith.Managers
             return query.ToList().Select(e => new RollList { DataId = e.ID, SystemData = SystemData.Enterprise, Name = e.Name }).ToList();
         }
 
-        public List<RollList> GetLawyer(GradeDegree degree,string key)
+        public List<RollList> GetLawyer(GradeDegree degree,string key,int cityID)
         {
-            var query = Db.Lawyers.Where(e => e.Deleted == false && e.Degree == degree).AsQueryable();
+            var query = Db.Lawyers.Where(e => e.Deleted == false && e.Degree == degree&&e.CityID==cityID).AsQueryable();
             if (!string.IsNullOrEmpty(key))
             {
                 query = query.Where(e => e.Name.ToLower().Contains(key.ToLower()));

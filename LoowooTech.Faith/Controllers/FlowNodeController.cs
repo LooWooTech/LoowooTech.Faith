@@ -24,6 +24,10 @@ namespace LoowooTech.Faith.Controllers
             {
                 FlowNodeState = DoingState.None
             };
+            if (Identity.Role == UserRole.Manager)
+            {
+                parameter.UserID = Identity.UserID;
+            }
             var list = Core.FlowNodeConductManager.Search(parameter);
             ViewBag.List = list;
             return View();
@@ -32,14 +36,14 @@ namespace LoowooTech.Faith.Controllers
         public ActionResult History(int page=1,int rows=20)
         {
             var pg = new PageParameter(page, rows);
-            var histroy = Core.FlowNodeConductManager.SearchHistory(pg);
+            var histroy = Core.FlowNodeConductManager.SearchHistory(pg,City.ID);
             ViewBag.History = histroy;
             ViewBag.Page = pg;
             return View();
         }
         public ActionResult Create(int infoId)
         {
-            var managers = Core.UserManager.GetManager();
+            var managers = Core.UserManager.GetManager(City.ID);
             ViewBag.Managers = managers;
             var conduct = Core.ConductManager.Get(infoId);
             ViewBag.Conduct = conduct;
@@ -132,19 +136,19 @@ namespace LoowooTech.Faith.Controllers
                 if (land != null)
                 {
                     Core.GradeManager.Grade(land, flowNode.Conduct.ID,GradeAction.Conduct);//对应的企业自然人如果发生信用评级发生改变，更新级别并且发布级别提醒
-                    if (flowNode.Conduct.Degree != CreditDegree.Good)// 并且不是诚信行为
-                    {
-                        var error = Core.RollManager.Update(land.ELID, land.SystemData, flowNode.Conduct.Degree);
-                        if (!string.IsNullOrEmpty(error))
-                        {
-                            Core.DailyManager.Save(new Daily
-                            {
-                                Name = "更新异常/黑名单",
-                                Description = string.Format("FlowNodeID:{0};ConductID:{1},错误信息：", flowNode.ID, flowNode.Conduct.ID),
-                                UserID = Identity.UserID
-                            });
-                        }
-                    }
+                    //if (flowNode.Conduct.Degree != CreditDegree.Good)// 并且不是诚信行为
+                    //{
+                    //    var error = Core.RollManager.Update(land.ELID, land.SystemData, flowNode.Conduct.Degree);
+                    //    if (!string.IsNullOrEmpty(error))
+                    //    {
+                    //        Core.DailyManager.Save(new Daily
+                    //        {
+                    //            Name = "更新异常/黑名单",
+                    //            Description = string.Format("FlowNodeID:{0};ConductID:{1},错误信息：", flowNode.ID, flowNode.Conduct.ID),
+                    //            UserID = Identity.UserID
+                    //        });
+                    //    }
+                    //}
                   
                 }
                 

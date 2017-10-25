@@ -21,6 +21,7 @@ namespace LoowooTech.Faith.Controllers
                 Old=Old,
                 New=New,
                 HasRead = hasRead,
+                CityID=City.ID,
                 Page = new PageParameter(page, rows)
             };
             var list = Core.FeedManager.Search(parameter);

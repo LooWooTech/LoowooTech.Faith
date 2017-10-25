@@ -114,16 +114,16 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="list"></param>
         /// <param name="userid"></param>
-        public void AddRange(List<Land> list,int userid)
+        public void AddRange(List<Land> list,int userid,int cityID)
         {
             var daily = new List<Daily>();
             var inputs = new List<Land>();
             foreach(var item in list)
             {
-                var enterprise = Core.EnterpriseManager.Get(item.ELName);
+                var enterprise = Core.EnterpriseManager.Get(item.ELName,cityID);
                 if (enterprise == null)
                 {
-                    var lawyer = Core.LawyerManager.Get(item.ELName);
+                    var lawyer = Core.LawyerManager.Get(item.ELName,cityID);
                     if (lawyer != null)
                     {
                         item.ELID = lawyer.ID;
@@ -142,7 +142,8 @@ namespace LoowooTech.Faith.Managers
                     {
                         Name = "批量导入供地信息",
                         Description = string.Format("未查询到名称为{0}的企业或者自然人信息",item.ELName),
-                        UserID = userid
+                        UserID = userid,
+                        CityID=cityID
                     });
                     continue;
                 }
@@ -169,6 +170,10 @@ namespace LoowooTech.Faith.Managers
         public List<LandView> Search(LandViewParameter parameter)
         {
             var query = Db.LandViews.AsQueryable();
+            if (parameter.CityID.HasValue)
+            {
+                query = query.Where(e => e.CityID == parameter.CityID.Value);
+            }
             if (parameter.ELID.HasValue)
             {
                 query = query.Where(e => e.ELID == parameter.ELID.Value);
@@ -197,7 +202,26 @@ namespace LoowooTech.Faith.Managers
             {
                 query = query.Where(e => e.Way == parameter.Way.Value);
             }
-            query = query.OrderByDescending(e => e.CreateTime).SetPage(parameter.Page);
+            if (parameter.Order.HasValue)
+            {
+                switch (parameter.Order.Value)
+                {
+                    case LandOrder.ContractNumber:
+                        query = query.OrderBy(e => e.ContractNumber);
+                        break;
+                    case LandOrder.Name:
+                        query = query.OrderBy(e => e.Name);
+                        break;
+                    case LandOrder.sName:
+                        query = query.OrderBy(e => e.sName);
+                        break;
+                }
+            }
+            else
+            {
+                query = query.OrderBy(e => e.CreateTime);
+            }
+            query = query.SetPage(parameter.Page);
             return query.ToList();
         }
         /// <summary>
@@ -218,9 +242,9 @@ namespace LoowooTech.Faith.Managers
         /// 编写时间：2017年3月18日14:07:44
         /// </summary>
         /// <returns></returns>
-        public long Count()
+        public long Count(int cityID)
         {
-            return Db.Lands.LongCount();
+            return Db.LandViews.Where(e=>e.CityID==cityID).LongCount();
         }
 
 

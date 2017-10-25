@@ -1,0 +1,126 @@
+﻿@{ 
+    Layout = null;
+    List<ScoresHistory> list = ViewBag.List;
+    var labels = list.Select(e => e.Grade.Name).ToArray();
+    var values = list.Select(e => 100 - e.DeDuck).ToArray();
+}
+
+<script src="~/Scripts/2/Chart.js"></script>
+<script src="~/Scripts/2/TodoChart.js"></script>
+<script>
+    $(function () {
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+
+
+        var labels=@Html.Raw(labels.ToJson())||[];
+        var values=@Html.Raw(values.ToJson())||[];
+        var ctx=document.getElementById("Chart-History");
+        //var myChart=new Chart(ctx,{
+        //    type:'bar',
+        //    data:{
+        //        labels:labels,
+        //        datasets:[{
+        //            label:"年度信用评级",
+        //            data:values,
+        //            backgroundColor:getChartColors2(values.length)
+        //        }]
+        //    }
+        //});
+
+        var myChart=new Chart(ctx,{
+            type:'line',
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"年度信用评级",
+                    data:values,
+                    fill:false,
+                    backgroundColor: window.chartColors.red,
+                    borderColor: window.chartColors.red
+                   // backgroundColor:getChartColors2(values.length)
+                }]
+            }
+        });
+    });
+</script>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">年度信用评级记录信息</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>点击信用等级</strong> 可查看评分详情，再次<strong>点击信用等级</strong> 可隐藏评分详情
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>评分时间</th>
+                        <th>信用等级</th>
+                        <th>信用得分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in list)
+                    {
+                        if (item.Grade != null)
+                        {
+                            <tr>
+                                <td>
+
+                                    @(item.Grade.Name)
+                                </td>
+                                <td>@(item.Grade.Time.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                                <td>
+                                    <button class="btn btn-xs btn-@(item.Degree==GradeDegree.A?"success":item.Degree==GradeDegree.B?"primary":item.Degree==GradeDegree.C?"warning":"danger")" type="button" data-toggle="collapse" data-target="#@(item.ID)" aria-expanded="false" aria-controls="">
+                                        @(item.Degree)
+                                    </button>
+                                    @*<span class="label label-@(item.Degree==GradeDegree.A?"success":item.Degree==GradeDegree.B?"primary":item.Degree==GradeDegree.C?"warning":"danger")">
+                                        @(item.Degree)
+                                    </span>*@
+                                </td>
+                                <td>@(100 - item.DeDuck)</td>
+                            </tr>
+                        }
+
+                    }
+                </tbody>
+            </table>
+            @foreach(var item in list)
+            {
+                <div class="collapse" id="@(item.ID)">
+                    <div class="well">
+                        <h4>@(item.Grade.Name)</h4>
+                        @if (item.ScoreTexts != null)
+                        {
+                            foreach(var text in item.ScoreTexts)
+                            {
+                                <p>@(text.Name) 扣<strong>@(text.Scores)</strong>分</p>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-12">
+            <canvas id="Chart-History"></canvas>
+        </div>
+    </div>
+  
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</button>
+</div>
+

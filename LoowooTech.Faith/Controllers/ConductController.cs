@@ -1,8 +1,10 @@
 ﻿using LoowooTech.Faith.Common;
 using LoowooTech.Faith.Models;
 using LoowooTech.Faith.Parameters;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -180,6 +182,13 @@ namespace LoowooTech.Faith.Controllers
             return Json(list,JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetScore(int id)
+        {
+            var standard = Core.StandardManager.Get(id);
+            return Json(standard, JsonRequestBehavior.AllowGet);   
+        }
+
+
         /// <summary>
         /// 作用：删除撤销诚信行为记录
         /// 作者：汪建龙
@@ -208,6 +217,7 @@ namespace LoowooTech.Faith.Controllers
                 var parameter = new EnterpriseParameter
                 {
                     Name = key,
+                    CityID=City.ID,
                     Page = new PageParameter(1, 5)
                 };
                 list = Core.EnterpriseManager.Search(parameter).Select(e => new JsonData { ID=e.ID,Name=e.Name}).ToList(); 
@@ -217,6 +227,7 @@ namespace LoowooTech.Faith.Controllers
                 var parameter = new LawyerParameter
                 {
                     Name = key,
+                    CityID=City.ID,
                     Page = new PageParameter(1, 5)
                 };
                 list = Core.LawyerManager.Search(parameter).Select(e => new JsonData { ID=e.ID,Name=e.Name}).ToList();
@@ -227,7 +238,7 @@ namespace LoowooTech.Faith.Controllers
 
         public ActionResult Submit(int id)
         {
-            var manager = Core.UserManager.GetManager();
+            var manager = Core.UserManager.GetManager(City.ID);
             ViewBag.Managers = manager;
             return View();
         }
@@ -279,6 +290,7 @@ namespace LoowooTech.Faith.Controllers
                 MinScore=minScore,
                 MaxScore=maxScore,
                 State=state,
+                CityID=City.ID,
                 Page = new PageParameter(page, rows)
             };
             if (!string.IsNullOrEmpty(systemData))
@@ -289,6 +301,20 @@ namespace LoowooTech.Faith.Controllers
             ViewBag.List = list;
             ViewBag.Parameter = parameter;
             ViewBag.Page = parameter.Page;
+            return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult Widget()
+        {
+            var parameter = new ConductStandardParameter
+            {
+                CityID=City.ID,
+                Page = new PageParameter(1, 5)
+            };
+            var list = Core.ConductStandardManager.Search(parameter);
+            ViewBag.List = list;
+            ViewBag.Parameter = parameter;
             return View();
         }
         public ActionResult Relieve(int id)
@@ -354,8 +380,19 @@ namespace LoowooTech.Faith.Controllers
             var filePath = FileManager.Upload(file);
             var list = ExcelManager.AnalyzeConduct(filePath);
             var dict = list.GroupBy(e => e.ELName).ToDictionary(e => e.Key, e => e.GroupBy(k => k.LandName).ToDictionary(k => k.Key, k => k.ToList()));
-            Core.ConductStandardManager.AddRange(dict, Identity.UserID);
+            Core.ConductStandardManager.AddRange(dict, Identity.UserID,City.ID);
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Download()
+        {
+            var list = Core.ConductStandardManager.Search(new ConductStandardParameter { CityID=City.ID});
+            IWorkbook workbook = ExcelManager.SaveConduct(list);
+            MemoryStream ms = new MemoryStream();
+            workbook.Write(ms);
+            ms.Flush();
+            byte[] fileContents = ms.ToArray();
+            return File(fileContents, "application/ms-excel", "诚信记录.xls");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
@@ -8,12 +9,9 @@ namespace LoowooTech.Faith.Models
 {
     public class Subject:ScoreBase
     {
-        ///// <summary>
-        ///// 评级
-        ///// </summary>
-        //public string Level { get; set; }
-        //public string LevelDescription { get; set; }
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ID { get; set; }
 
         #region  信用评级
         /// <summary>
@@ -59,9 +57,9 @@ namespace LoowooTech.Faith.Models
             {
                 if (Record.HasValue)
                 {
-                    return 100 - Average - Record.Value;
+                    return  Average + Record.Value;
                 }
-                return 100-Average;
+                return Average;
             }
         }
         #endregion

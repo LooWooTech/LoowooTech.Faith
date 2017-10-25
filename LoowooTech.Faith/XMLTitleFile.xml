@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Faiths Title="土地市场诚信管理系统">
+  <District Name="嘉善县" Department="嘉善县国土资源局" Number="善土"></District>
+  <!--<District Name="海宁市" Department="海宁市国土资源局" Number="海土"></District>-->
+  <!--<District Name="秀洲区" Department="嘉兴市国土资源局秀洲区分局" Number="秀土"></District>-->
+  <!--<District Name="秀洲区"></District>-->
+  <!--<District Name="海盐县" Department="海盐县国土资源局" Number="盐土"></District>-->
+  <Credits>
+    <Credit Name="竞买"></Credit>
+    <Credit Name="开发利用"></Credit>
+    <Credit Name="违规违法"></Credit>
+    <Credit Name="合同履约"></Credit>
+    <Credit Name="其他"></Credit>
+  </Credits>
+  <Degrees>
+    <Degree Name="轻微不诚信"></Degree>
+    <Degree Name="不诚信行为"></Degree>
+    <Degree Name="严重不诚信"></Degree>
+  </Degrees>
+  <Enterprise>
+    <Field Name="Name" Title="企业名称"></Field>
+    <Field Name="Address" Title="地址"></Field>
+    <Field Name="OIBC" Title="组织机构代码"></Field>
+    <Field Name="USCC" Title="统一社会信用代码"></Field>
+    <Field Name="Lawyer" Title="企业法人"></Field>
+    <Field Name="LawNumber" Title="企业法人身份证号"></Field>
+    <Field Name="Money" Title="注册资本【万元】"></Field>
+    <Field Name="Number" Title="营业执照/注册号"></Field>
+    <Field Name="Scope" Title="经营范围"></Field>
+    <Field Name="Type" Title="企业类型"></Field>
+    <Field Name="ContactWay" Title="联系电话"></Field>
+    <Field Name="Contact" Title="联系人名字"></Field>
+    <Field Name="TelPhone" Title="联系人电话"></Field>
+  </Enterprise>
+</Faiths>

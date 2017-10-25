@@ -22,14 +22,14 @@
                     <div class="col-md-12">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.ELName)?"success":"default")" name="ELName">全部</button>
+                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.ELName)?"primary":"default")" name="ELName">全部</button>
                             </div>
                             <input type="text" name="ELName" class="form-control" placeholder="企业/自然人关键字"  value="@(parameter.ELName)"/>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">&nbsp;原始级别：</label>
+                    <label class="control-label">&nbsp;上一轮级别：</label>
                     <div class="col-md-12">
                         <select name="Old" class="form-control">
                             <option @(parameter.Old.HasValue?"":"selected=selected")>全部</option>
@@ -77,9 +77,9 @@
                     <tr>
                         <th>序号</th>
                         <th>企业/自然人名称</th>
-                        <th>原始信用级别</th>
+                        <th>上一轮信用级别</th>
                         <th>当前信用级别</th>
-                        <th>诚信行为</th>
+                        <th>诚信变化原因</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -99,14 +99,25 @@
                                 <th>@(item.Old.HasValue ? item.Old.Value.ToString() : "未评级")</th>
                                 <th>@(item.New.HasValue ? item.New.Value.ToString() : "未评级")</th>
                                 <th>
-                                    @if (item.ConductID.HasValue)
-                                    {
+                                    @switch (item.Action)
+                                                {
+                                                    case GradeAction.AddLandRecord:
+                                                    case GradeAction.Conduct:
+                                                    case GradeAction.Year:
+                                                    case GradeAction.Relieve:
+                                            <label class="label label-success">@(item.Action.GetDescription())</label>
+                                                    break;
+                                                case GradeAction.CanRelieve:
+                                                case GradeAction.DeleteConduct:
+                                                case GradeAction.DeleteLandRecord:
+                                            <label class="label label-danger">@(item.Action.GetDescription())</label>
+                                                    break;
+                                                case GradeAction.EditLandRecord:
+                                            <label class="label label-info">@(item.Action.GetDescription())</label>
+                                            break;
+                                            }
 
-                                    }
-                                    else
-                                    {
-                                        <label class="label label-success">年度评级</label>
-                                    }
+
                                 </th>
                                 <th>
                                     <a href="/Feed/Read?id=@(item.ID)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-flag"></i>&nbsp;标记已读</a>

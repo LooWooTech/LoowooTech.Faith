@@ -1,0 +1,19 @@
+﻿@{ 
+    Layout = null;
+    List<LandRecordView> list = ViewBag.List;
+    LandRecordViewParameter parameter = ViewBag.Parameter;
+}
+
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <i class="fa fa-info"></i>
+        <a href="/LandRecord/Index" class="btn btn-xs btn-danger">&nbsp;违法用地 </a>
+        <span class="label label-danger pull-right">@(parameter.Page.RecordCount)</span>
+    </div>
+    <ul class="list-unstyled m-t-md list-group">
+        @foreach (var item in list)
+        {
+            <li class="list-group-item">@(item.Code)</li>
+        }
+    </ul>
+</div>

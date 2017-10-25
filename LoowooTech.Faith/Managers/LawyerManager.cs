@@ -67,9 +67,9 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Lawyer　Get(string name)
+        public Lawyer　Get(string name,int cityID)
         {
-            var model = Db.Lawyers.FirstOrDefault(e => e.Name.ToLower() == name.ToLower());
+            var model = Db.Lawyers.FirstOrDefault(e => e.CityID==cityID && e.Name.ToLower() == name.ToLower());
             return model;
         }
         /// <summary>
@@ -118,6 +118,10 @@ namespace LoowooTech.Faith.Managers
         public List<Lawyer> Search(LawyerParameter parameter)
         {
             var query = Db.Lawyers.Where(e=>e.Deleted==parameter.Deleted).AsQueryable();
+            if (parameter.CityID.HasValue)
+            {
+                query = query.Where(e => e.CityID == parameter.CityID.Value);
+            }
             if (parameter.Degree.HasValue)
             {
                 query = query.Where(e => e.Degree == parameter.Degree.Value);
@@ -162,9 +166,9 @@ namespace LoowooTech.Faith.Managers
         /// <param name="sex">性别</param>
         /// <param name="number">证件编号</param>
         /// <returns></returns>
-        public bool Exist(string name,Sex sex,string number)
+        public bool Exist(string name,Sex sex,string number,int cityId)
         {
-            return Db.Lawyers.Any(e => e.Name.ToLower() == name.ToLower() && e.Sex == sex && e.Number.ToLower() == number.ToLower());
+            return Db.Lawyers.Any(e => e.Name.ToLower() == name.ToLower() && e.Sex == sex && e.Number.ToLower() == number.ToLower()&&e.CityID==cityId);
         }
         /// <summary>
         /// 作用：批量保存自然人列表
@@ -180,13 +184,14 @@ namespace LoowooTech.Faith.Managers
             foreach(var item in list)
             {
                 Daily daily = null;
-                if (Exist(item.Name, item.Sex, item.Number))
+                if (Exist(item.Name, item.Sex, item.Number,item.CityID))
                 {
                     daily = new Daily
                     {
                         Name = name,
                         Description = string.Format("系统中已存在姓名：{0}；性别：{1} ；证件编号：{2}", item.Name, item.Sex.GetDescription(), item.Number),
-                        UserID = userId
+                        UserID = userId,
+                        CityID=item.CityID
                     };
                 }
                 else
@@ -202,7 +207,8 @@ namespace LoowooTech.Faith.Managers
                         {
                             Name = name,
                             Description = string.Format("导入姓名：{0}； 性别：{1}；证件编号：{2}；发生错误：{3}", item.Name, item.Sex.GetDescription(), item.Number, ex.Message),
-                            UserID = userId
+                            UserID = userId,
+                            CityID=item.CityID
                         };
                     }
                 }
@@ -226,14 +232,19 @@ namespace LoowooTech.Faith.Managers
         /// 编写时间：2017年3月16日16:52:54
         /// </summary>
         /// <returns></returns>
-        public long Count()
+        public long Count(int cityID)
         {
-            return Db.Lawyers.Where(e=>e.Deleted==false).LongCount();
+            return Db.Lawyers.Where(e=>e.Deleted==false&&e.CityID==cityID).LongCount();
         }
-        public void Grade()
+
+        public long CountEnterprise(int cityID)
+        {
+            return Db.Lawyers.Where(e => e.Deleted == false && e.CityID == cityID && e.EnterpriseID.HasValue).LongCount();
+        }
+        public void Grade(int cityID)
         {
             var feeds = new List<Feed>();
-            var scores = Db.LawyerScores.ToList();
+            var scores = Db.LawyerScores.Where(e=>e.CityID==cityID).ToList();
             foreach(var score in scores)
             {
                 var lawyer = Db.Lawyers.Find(score.ID);
@@ -264,6 +275,14 @@ namespace LoowooTech.Faith.Managers
             }
             Db.SaveChanges();
         }
+        /// <summary>
+        /// 作用：对一个自然人进行信用评级
+        /// 作者：王健林
+        /// 编写时间：2017年4月6日10:58:27；
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="conductId"></param>
+        /// <param name="action"></param>
         public void Grade(int id,int conductId,GradeAction action)
         {
             var lawyer = Db.Lawyers.Find(id);
@@ -301,6 +320,12 @@ namespace LoowooTech.Faith.Managers
 
             }
             Db.SaveChanges();
+        }
+
+
+        public List<LawyerScore> GetScores(int CityId)
+        {
+            return Db.LawyerScores.Where(e => e.CityID == CityId && e.Deleted == false).ToList();
         }
     }
 }

@@ -19,6 +19,18 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         public string LandName { get; set; }
         /// <summary>
+        /// 宗地编号
+        /// </summary>
+        public string LandNumber { get; set; }
+        /// <summary>
+        /// 合同编号
+        /// </summary>
+        public string ContractNumber { get; set; }
+        /// <summary>
+        /// 工地面积
+        /// </summary>
+        public double Area { get; set; }
+        /// <summary>
         /// 诚信环节
         /// </summary>
         public Credit Credit { get; set; }
@@ -35,6 +47,10 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         public string StandardName { get; set; }
         /// <summary>
+        /// 诚信编码
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
         /// 分值
         /// </summary>
         public double Score { get; set; }
@@ -49,5 +65,6 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         public string ELName { get; set; }
         public string Remark { get; set; }
+        public int CityID { get; set; }
     }
 }

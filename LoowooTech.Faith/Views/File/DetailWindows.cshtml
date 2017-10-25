@@ -1,0 +1,40 @@
+﻿@{ 
+    Layout = null;
+    List<FaithFile> list = ViewBag.List;
+}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">@(ViewBag.Name)</h4>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>点击图片</strong> 可查看原图
+        </div>
+
+        @foreach (var item in list)
+        {
+            <div class="col-md-6 col-xs-6">
+                <a href="/File/DetailOne?id=@(item.ID)" class="thumbnail" target="_blank">
+                    <img src="/@(item.Path)" alt="@(item.Name)" />
+                   
+ 
+                   
+                </a>
+                @*<div class="caption">
+                    <h4>@(item.Name)</h4>
+                    <p>@(item.Description)</p>
+                </div>*@
+            </div>
+        }
+    </div>
+  
+</div>
+
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="glyphicon glyphicon-ok"></i>&nbsp; 确定</button>
+</div>

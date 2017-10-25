@@ -40,6 +40,7 @@ namespace LoowooTech.Faith.Models
         /// 对应的供地信息
         /// </summary>
         public int LandID { get; set; }
+        public virtual Land Land { get; set; }
 
         public Credit Credit { get; set; }
         public CreditDegree Degree { get; set; }

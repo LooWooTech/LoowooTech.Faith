@@ -162,10 +162,10 @@ namespace LoowooTech.Faith.Managers
             return count.HasValue ? conducts.Where(e => e.Degree == degree).Count() > count.Value : conducts.Any(e => e.Degree == degree);
         }
 
-        public void Grade2()
+        public void Grade2(int cityID)
         {
-            Core.EnterpriseManager.Grade();
-            Core.LawyerManager.Grade();
+            Core.EnterpriseManager.Grade(cityID);
+            Core.LawyerManager.Grade(cityID);
         }
 
         public void Grade(Land land,int conductId,GradeAction action)

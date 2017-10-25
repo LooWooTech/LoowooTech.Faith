@@ -3,6 +3,7 @@
     ViewBag.Title = "查看自然人";
     Lawyer lawyer = ViewBag.Model;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.SystemData = SystemData.Lawyer;
 }
 
 <br />
@@ -43,8 +44,8 @@
     </tbody>
 </table>
 @{ 
-     Html.RenderPartial("_Subject", lawyer as Subject);
-    Html.RenderAction("Score", "Grade", new { ELID = lawyer.ID, systemdata = SystemData.Lawyer });
+    Html.RenderPartial("_Subject", lawyer as Subject);//关联的信用级别
+    //Html.RenderAction("Score", "Grade", new { ELID = lawyer.ID, systemdata = SystemData.Lawyer });//动态查询的信用级别
     Html.RenderAction("DetailList", "Land", new { ELID = lawyer.ID, SystemData = SystemData.Lawyer });
     Html.RenderAction("Detail", "Conduct", new { ELID = lawyer.ID, systemdata = SystemData.Lawyer });
     Html.RenderAction("DetailList", "LandRecord", new { ELID = lawyer.ID, systemdata = SystemData.Lawyer });

@@ -11,33 +11,35 @@
     }
 }
 
-<h3>&nbsp;信用评级(关联)</h3>
-@*<table class="table table-bordered">
-    <tr>
-        <th>信用评级：</th>
-        <td><h2 style="margin-top:5px;"><label class="label label-danger">@(subject.Level)</label></h2> </td>
-        <th>轻微不诚信</th>
-        <td><label class="label label-success">@(subject.Good)</label> </td>
-    </tr>
-    <tr>
-        <th>评级时间：</th>
-        <td>@(subject.GradeTime.HasValue ? subject.GradeTime.Value.ToString("yyyy-MM-dd") : "未评级")</td>
-        <th>不诚信行为</th>
-        <td><label class="label label-warning">@(subject.Less)</label></td>
-    </tr>
-    <tr>
-        <th>信用评级说明：</th>
-        <td>@(subject.LevelDescription)</td>
-        <th>严重不诚信</th>
-        <td><label class="label label-danger">@(subject.Bad)</label> </td>
-    </tr>
-</table>*@
+<h3>
+    &nbsp;信用评级
+  
+    <a class="btn btn-primary btn-xs" href="/Grade/Detail?ELID=@(subject.ID)&&SystemData=@(ViewBag.SystemData)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-bookmark"></i>查看历史年度评级</a>
+    @if (Identity.Role == UserRole.Administrator)
+    {
+        @*<a href="" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-flag"></i>&nbsp;更改等级</a>*@
+    }
+</h3>
+
+
 
 <table class="table table-striped table-bordered">
     <tr>
         <th>信用评级：</th>
-        <td><h2 style="margin-top:5px;"><label class="label label-danger">@(subject.Degree.HasValue?subject.Degree.Value.ToString():"未评审")</label></h2> </td>
-        <th>最终分值：</th>
+        <td>
+            <h2 style="margin-top:5px;">
+                <label class="label label-@(subject.Degree.HasValue?
+                                                subject.Degree.Value==GradeDegree.A?"success"
+                                                :subject.Degree.Value==GradeDegree.B?"primary"
+                                                :subject.Degree.Value==GradeDegree.C?"warning"
+                                                :"danger"
+                                                :"default")">
+                    @(subject.Degree.HasValue?subject.Degree.Value.ToString():"未评审")
+                </label>
+            </h2> 
+          
+        </td>
+        <th>最终扣分值：</th>
         <td>@(subject.DeDuck)</td>
     </tr>
     <tr>

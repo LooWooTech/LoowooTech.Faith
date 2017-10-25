@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace LoowooTech.Faith.Controllers
 {
+    [UserAuthorize(false)]
     public class UserController : ControllerBase
     {
         public ActionResult Login()
@@ -17,10 +18,14 @@ namespace LoowooTech.Faith.Controllers
         [HttpPost]
         public ActionResult Login(string name,string password)
         {
-            var user = Core.UserManager.Login(name, password);
+            var user = Core.UserManager.Login(name, password,City.ID);
             if (user == null)
             {
                 return ErrorJsonResult("登录失败，请核对用户名和密码");
+            }
+            if (user.CityID != City.ID)
+            {
+                return ErrorJsonResult("登陆失败,请核对用户名和密码");
             }
             if (user.Approve == false)
             {
@@ -43,7 +48,7 @@ namespace LoowooTech.Faith.Controllers
             {
                 return ErrorJsonResult("注册码不正确，请联系管理员");
             }
-            if (Core.UserManager.Exist(name))
+            if (Core.UserManager.Exist(name,City.ID))
             {
                 return ErrorJsonResult("系统中已存在相同的登录名,请更改系统登录名");
             }

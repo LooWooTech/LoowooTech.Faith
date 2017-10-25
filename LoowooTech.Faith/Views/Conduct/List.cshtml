@@ -5,15 +5,28 @@
 
 }
 
+<script src="~/Content/IN/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="~/Content/IN/js/plugins/daterangepicker/daterangepicker.js"></script>
+<script>
+    $(function () {
+        $('#data1 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+    });
+</script>
+
+
 <div class="row">
     <div class="col-md-3 well">
         <fieldset><legend>查询设置</legend></fieldset>
         <form method="get">
             <div class="col-md-12">
-                <div class="form-group">
+                <div class="form-group" id="data1">
                     <label class="control-label">&nbsp;录入时间：</label>
                     <div class="col-md-12">
-                        <div class="input-group input-group-sm">
+                        <div class="input-group input-group-sm input-daterange" id="datepicker">
                             <input type="text" name="StartTIme" class="form-control datetimepicker" placeholder="起始时间" value="@(parameter.StartTime.HasValue?parameter.StartTime.Value.ToString("yyyy-MM-dd"):"")" />
                             <span class="input-group-addon">至</span>
                             <input type="text" name="EndTime" class="form-control datetimepicker" placeholder="结束时间"  value="@(parameter.EndTime.HasValue?parameter.EndTime.Value.ToString("yyyy-MM-dd"):"")"/>
@@ -38,10 +51,10 @@
                     <label class="control-label">&nbsp;企业/自然人：</label>
                     <div class="col-md-12">
                         <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-@(parameter.SystemData.HasValue?"default":"success")" name="SystemData">全部</button>
+                            <button type="button" class="btn btn-@(parameter.SystemData.HasValue?"default":"primary")" name="SystemData">全部</button>
                             @foreach(SystemData systemData in Enum.GetValues(typeof(SystemData)))
                             {
-                                <button type="button" class="btn btn-@(parameter.SystemData.HasValue&&parameter.SystemData.Value==systemData?"success":"default")" name="SystemData">@(systemData.GetDescription())</button>
+                                <button type="button" class="btn btn-@(parameter.SystemData.HasValue&&parameter.SystemData.Value==systemData?"primary":"default")" name="SystemData">@(systemData.GetDescription())</button>
                             }
                         </div>
                     </div>
@@ -51,7 +64,7 @@
                     <div class="col-md-12">
                         <div class="input-group input-group-sm" role="group">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.ELName)?"success":"default")" name="ELName">全部</button>
+                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.ELName)?"primary":"default")" name="ELName">全部</button>
                             </div>
                             <input type="text" name="ELName" class="form-control" placeholder="关键字" value="@(parameter.ELName)"/>
                         </div>
@@ -75,7 +88,7 @@
                     <div class="col-md-12">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.StandardName)?"success":"default")" name="StandardName">全部</button>
+                                <button type="button" class="btn btn-@(string.IsNullOrEmpty(parameter.StandardName)?"primary":"default")" name="StandardName">全部</button>
                             </div>
                             <input type="text" name="StandardName" class="form-control" placeholder="诚信行为关键字"  value="@(parameter.StandardName)"/>
                         </div>

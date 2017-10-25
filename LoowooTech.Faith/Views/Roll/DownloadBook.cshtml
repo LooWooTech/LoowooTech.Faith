@@ -1,0 +1,77 @@
+﻿@model Letter
+@{ 
+    Layout = null;
+    var elName = Model.Conducts.Count > 0 ? Model.Conducts.FirstOrDefault().ELName : Model.LandRecord.Count > 0 ? Model.LandRecord.FirstOrDefault().ELName : "未获取";
+    var credit = Model.Conducts.Select(e => e.Credit.GetDescription()).Distinct().ToList();
+    if (Model.LandRecord.Count > 0)
+    {
+        credit.Add("违法用地");
+    }
+    var description=string.Join(";", Model.Conducts.GroupBy(e => e.LandName).Select(k => string.Format("项目：{0}存在{1}", k.Key, string.Join(",", k.Select(j => j.StandardName).ToArray()))));
+    if (Model.LandRecord.Count > 0)
+    {
+        description+= string.Format("被嘉善县国土资源局处以退出非法占用土地并惩罚的行政处罚（行政处罚决定书号：{0}）", string.Join(",", Model.LandRecord.Select(e => e.Code).ToArray()));
+    }
+}
+
+<div class="page-header">
+    <h3 class="text-center">下载@(Model.Book.GetDescription())</h3>
+</div>
+
+<form class="form-horizontal" method="post" action="/Roll/DownloadBook" >
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;告知书编号【必填】：</label>
+        <div class="col-md-7">
+            <input type="hidden" name="Book" value="@(Model.Book)" />
+            <input type="text" name="Number" class="form-control" value="@(string.Format("{0}诚信{1}字[{2}]{3}号", SystemManager.Number,Model.Book==Book.Notification?"告":"认",DateTime.Now.Year,Model.Number))" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;企业/自然人名称【必填】：</label>
+        <div class="col-md-7">
+            <input type="text" name="Name" class="form-control" value="@(elName)" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;诚信环节【必填】：</label>
+        <div class="col-md-7">
+            <input type="text" name="Credit" class="form-control" value="@string.Join("/",credit.ToArray())" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;失信行为【必填】：</label>
+        <div class="col-md-7">
+            <textarea name="Description" class="form-control" rows="5">@(description)</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;联系人【必填】：</label>
+        <div class="col-md-7">
+            <input type="text" name="Contact" class="form-control" value="@Identity.DisplayName" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;联系电话【必填】：</label>
+        <div class="col-md-7">
+            <input type="text" name="TelPhone" class="form-control" value="@(Identity.TelPhone)" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;时间【必填】：</label>
+        <dv class="col-md-7">
+            <input type="text" name="Time" class="form-control" value="@(DateTime.Now.ToLongDateString())" required />
+        </dv>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-4">&nbsp;签发单位：</label>
+        <div class="col-md-7">
+            <input type="text" name="Signature" class="form-control" value="@(SystemManager.Department)" readonly />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-7 col-md-offset-4">
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-download-alt"></i>&nbsp; 下载</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>&nbsp; 取消</button>
+        </div>
+    </div>
+</form>

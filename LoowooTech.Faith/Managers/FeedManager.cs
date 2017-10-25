@@ -13,6 +13,10 @@ namespace LoowooTech.Faith.Managers
         public List<FeedView> Search(FeedParameter parameter)
         {
             var query = Db.FeedViews.AsQueryable();
+            if (parameter.CityID.HasValue)
+            {
+                query = query.Where(e => e.CityID == parameter.CityID.Value);
+            }
             if (parameter.Old.HasValue)
             {
                 query = query.Where(e => e.Old == parameter.Old.Value);
@@ -35,9 +39,9 @@ namespace LoowooTech.Faith.Managers
             return query.ToList();
         }
 
-        public long Count(bool hasRead=false)
+        public long Count(int cityID, bool hasRead=false)
         {
-            return Db.Feeds.Where(e=>e.HasRead==hasRead).LongCount();
+            return Db.FeedViews.Where(e=>e.HasRead==hasRead&&e.CityID==cityID).LongCount();
         }
 
         /// <summary>

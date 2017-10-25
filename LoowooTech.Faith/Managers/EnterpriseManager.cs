@@ -66,9 +66,9 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Enterprise Get(string name)
+        public Enterprise Get(string name,int cityID)
         {
-            var model = Db.Enterprises.FirstOrDefault(e => e.Name.ToLower() == name.ToLower());
+            var model = Db.Enterprises.FirstOrDefault(e => e.CityID==cityID &&e.Name.ToLower() == name.ToLower());
             return model;
         }
         /// <summary>
@@ -101,6 +101,11 @@ namespace LoowooTech.Faith.Managers
             Db.SaveChanges();
             return true;
         }
+
+        public List<string> GetEnterpriseType()
+        {
+            return Db.Enterprises.Select(e => e.Type).Distinct().ToList();
+        }
         /// <summary>
         /// 作用：查询企业
         /// 作者：汪建龙
@@ -111,6 +116,10 @@ namespace LoowooTech.Faith.Managers
         public List<Enterprise> Search(EnterpriseParameter parameter)
         {
             var query = Db.Enterprises.Where(e=>e.Deleted==parameter.Deleted).AsQueryable();
+            if (parameter.CityID.HasValue)
+            {
+                query = query.Where(e => e.CityID == parameter.CityID.Value);
+            }
             if (parameter.Degree.HasValue)
             {
                 query = query.Where(e => e.Degree == parameter.Degree.Value);
@@ -149,7 +158,15 @@ namespace LoowooTech.Faith.Managers
             }
             if (!string.IsNullOrEmpty(parameter.Type))
             {
-                query = query.Where(e => e.Type.ToLower().Contains(parameter.Type.ToLower()));
+                if (parameter.Type == "NULL")
+                {
+                    query = query.Where(e => string.IsNullOrEmpty(e.Type));
+                }
+                else
+                {
+                    query = query.Where(e => e.Type.ToLower().Contains(parameter.Type.ToLower()));
+                }
+                
             }
             if (!string.IsNullOrEmpty(parameter.Contact))
             {
@@ -177,9 +194,9 @@ namespace LoowooTech.Faith.Managers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool Exist(string name)
+        public bool Exist(string name,int cityID)
         {
-            return Db.Enterprises.Any(e => e.Name.ToLower() == name.ToLower());
+            return Db.Enterprises.Any(e => e.Name.ToLower() == name.ToLower()&&e.CityID==cityID);
         }
         public void AddRange(List<Enterprise> list, int userid)
         {
@@ -188,13 +205,14 @@ namespace LoowooTech.Faith.Managers
             foreach (var item in list)
             {
                 Daily daily = null;
-                if (Exist(item.Name))
+                if (Exist(item.Name,item.CityID))
                 {
                     daily = new Daily
                     {
                         Name = name,
                         Description = string.Format("系统中已存在企业名称为{0}的记录了", item.Name),
-                        UserID = userid
+                        UserID = userid,
+                        CityID=item.CityID
                     };
                 }
                 else
@@ -208,7 +226,8 @@ namespace LoowooTech.Faith.Managers
                         {
                             Name = name,
                             Description = string.Format("导入企业{0}；发生错误{1}", item.Name, ex.Message),
-                            UserID = userid
+                            UserID = userid,
+                            CityID=item.CityID
                         };
                     }
                 }
@@ -229,9 +248,10 @@ namespace LoowooTech.Faith.Managers
         /// 编写时间：2017年3月16日16:08:33
         /// </summary>
         /// <returns></returns>
-        public long Count()
+        public long Count(int cityID)
         {
-            return Db.Enterprises.Where(e=>e.Deleted==false).LongCount();
+            //var step = Db.FlowSteps.Find(2);
+            return Db.Enterprises.Where(e=>e.Deleted==false&&e.CityID==cityID).LongCount();
         }
 
         public bool Used(int id)
@@ -243,10 +263,10 @@ namespace LoowooTech.Faith.Managers
         /// 作者：汪建龙
         /// 编写时间：2017年3月31日14:10:47
         /// </summary>
-        public void Grade()
+        public void Grade(int cityID)
         {
             var feeds = new List<Feed>();
-            var enterprise_scores = Db.EnterpriseScores.ToList();
+            var enterprise_scores = Db.EnterpriseScores.Where(e=>e.CityID==cityID).ToList();
             foreach(var score in enterprise_scores)
             {
                 var enterprise = Db.Enterprises.Find(score.ID);
@@ -318,6 +338,23 @@ namespace LoowooTech.Faith.Managers
                 Db.Feeds.Add(feed);
             }
             Db.SaveChanges();
+        }
+
+        public List<Enterprise> GetFull(int cityID)
+        {
+            var list = Db.Enterprises.Where(e => e.CityID == cityID).ToList();
+            foreach(var item in list)
+            {
+                item.ConductStandards = Db.ConductStandards.Where(e => e.ELID == item.ID && e.SystemData == SystemData.Enterprise).ToList();
+            }
+
+            return list;
+        }
+
+
+        public List<EnterpriseScore> GetScores(int cityId)
+        {
+            return Db.EnterpriseScores.Where(e => e.CityID == cityId && e.Deleted == false).ToList();
         }
     }
 }

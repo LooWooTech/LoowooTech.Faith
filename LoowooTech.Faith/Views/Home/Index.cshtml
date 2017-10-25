@@ -1,86 +1,68 @@
 ﻿
 @{
-    ViewBag.Title = "系统首页";
+    ViewBag.Title = "首页";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    long ECount = ViewBag.ECount;
-    long LCount = ViewBag.LCount;
 }
-<div class="page-header">
-    <h2>欢迎页</h2>
-</div>
+
+<style>
+    .Enterprise {
+        background: url(../../Images/Enterprise.png) no-repeat center;
+        background-size: 100%;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    .Lawyer {
+        background: url(../../Images/Lawyer.png) no-repeat center;
+        background-size: 100%;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+
 
 <div class="row">
-    <div class="col-md-6">
-        <blockquote >
-            <p><a href="/Enterprise/Index"><i class="glyphicon glyphicon-briefcase"></i>&nbsp;企业管理</a></p>
-            <footer>企业数量：@(ECount)</footer>
-        </blockquote>
+    <div class="col-lg-6">
+        @{
+            Html.RenderAction("Widget", "Enterprise");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Lawyer/Index"><i class="glyphicon glyphicon-user"></i>&nbsp;自然人管理</a></p>
-            <footer>自然人数量：@(LCount)</footer>
-        </blockquote>
+    <div class="col-lg-6">
+        @{
+            Html.RenderAction("Widget", "Lawyer");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Land/Index"><i class="glyphicon glyphicon-cloud"></i>&nbsp;供地管理</a></p>
-            <footer>供地数量：@(ViewBag.LandCount)</footer>
-        </blockquote>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        @{
+            Html.RenderAction("Widget", "LandRecord");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/LandRecord/Index"><i class="glyphicon glyphicon-screenshot"></i>&nbsp; 违法用地管理</a></p>
-            <footer>违法用地记录：@(ViewBag.LandRecordCount)</footer>
-        </blockquote>
+    <div class="col-lg-4">
+        @{
+            Html.RenderAction("RedWidget", "Roll");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Roll/Black"><i class="glyphicon glyphicon-paperclip"></i>&nbsp; 黑名单</a></p> 
-            <footer>黑名单数量：@(ViewBag.Black)</footer>
-        </blockquote>
+    <div class="col-lg-4">
+        @{
+            Html.RenderAction("BlackWidget", "Roll");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Roll/Red"><i class="glyphicon glyphicon-question-sign"></i>&nbsp; 异常名单</a></p>
-            <footer>异常名单数量：@(ViewBag.Red)</footer>
-        </blockquote>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        @{
+            Html.RenderAction("Widget", "Land");
+        }
     </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Conduct/Index"><i class="glyphicon glyphicon-credit-card"></i>&nbsp;诚信行为管理</a></p>
-            <footer>诚信行为记录：@(ViewBag.CCount)</footer>
-        </blockquote>
-    </div>
-    <div class="col-md-6">
-        <blockquote >
-            <p><a href="/Grade/Index"><i class="glyphicon glyphicon-grain"></i>&nbsp;诚信评级</a></p>
-            <footer><a href="/Grade/download" class="btn btn-primary btn-large"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载综合分值表</a>   </footer>
-        </blockquote>
-    </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Grade"><i class="glyphicon glyphicon-grain"></i>&nbsp;信用评级计算</a></p>
-            <footer> 每年12月31日点击开始计算信用评级按钮，系统将自动计算和更新企业及自然人的信用级别信息。</footer>
-        </blockquote>
-    </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Feed"><i class="glyphicon glyphicon-headphones"></i>&nbsp;消息管理</a></p>
-            <footer>未读消息：@(ViewBag.FCount)</footer>
-        </blockquote>
-    </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/Recycle"><i class="glyphicon glyphicon-folder-open"></i>&nbsp;回收站</a></p>
-            <footer>系统中删除的企业以及自然人可以通过回收站还原</footer>
-        </blockquote>
-    </div>
-    <div class="col-md-6">
-        <blockquote>
-            <p><a href="/System"><i class="glyphicon glyphicon-cog"></i>&nbsp;系统管理</a></p>
-            <footer>对系统中诚信环节行为、用户管理</footer>
-        </blockquote>
+    <div class="col-lg-6">
+        @{
+            Html.RenderAction("Widget", "Conduct");
+        }
     </div>
 </div>
 

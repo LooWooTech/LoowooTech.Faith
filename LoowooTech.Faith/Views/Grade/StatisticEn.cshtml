@@ -1,0 +1,61 @@
+﻿@{ 
+    if (Model == null)
+    {
+        return;
+    }
+
+    var dict = Model as Dictionary<string, int>;
+
+
+    var labels = dict.Select(e => e.Key).ToArray();
+    var values = dict.Select(e => e.Value).ToArray();
+}
+
+
+<script>
+    $(function () {
+        var labels=@Html.Raw(labels.ToJson())||[];
+        var values=@Html.Raw(values.ToJson())||[];
+
+        var ctx=document.getElementById("Chart-Enterprise");
+        var myChart=new Chart(ctx,{
+            type:'pie',
+            data:{
+                labels:labels,
+                datasets:[{
+                    data:values,
+                    backgroundColor:getChartColors2(values.length)
+                }]
+            }
+        });
+
+    });
+</script>
+
+<div class="row">
+    <div class="col-md-12 col-xs-12 col-sm-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>等级</th>
+                    @foreach (var key in dict.Keys)
+                    {
+                        <th>@(key)</th>
+                    }
+                    <th>合计</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>数量【家】</td>
+                    @foreach (var value in dict.Values)
+                    {
+                        <td>@(value)</td>
+                    }
+                    <td>@(values.Sum())</td>
+                </tr>
+            </tbody>
+        </table>
+        <canvas id="Chart-Enterprise"></canvas>
+    </div>
+</div>

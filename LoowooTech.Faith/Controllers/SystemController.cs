@@ -38,10 +38,7 @@ namespace LoowooTech.Faith.Controllers
             {
                 return ErrorJsonResult("未获取诚信类型信息");
             }
-            if (Core.StandardManager.Exist(standard.Name, standard.Credit))
-            {
-                return ErrorJsonResult(string.Format("系统中已存在名称：{0}；环节为：{1}的类型记录", standard.Name, standard.Credit.GetDescription()));
-            }
+        
             if (standard.ID > 0)
             {
                 if (!Core.StandardManager.Edit(standard))
@@ -51,6 +48,10 @@ namespace LoowooTech.Faith.Controllers
             }
             else
             {
+                if (Core.StandardManager.Exist(standard.Name, standard.Credit))
+                {
+                    return ErrorJsonResult(string.Format("系统中已存在名称：{0}；环节为：{1}的类型记录", standard.Name, standard.Credit.GetDescription()));
+                }
                 var id = Core.StandardManager.Save(standard);
                 if (id <= 0)
                 {
@@ -71,7 +72,7 @@ namespace LoowooTech.Faith.Controllers
 
         public ActionResult UserList()
         {
-            var list = Core.UserManager.GetList();
+            var list = Core.UserManager.GetList(City.ID);
             ViewBag.List = list;
             return View();
         }
@@ -111,6 +112,41 @@ namespace LoowooTech.Faith.Controllers
             return SuccessJsonResult();
         }
 
+
+        public ActionResult CreateUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult SaveUser(User user,string copyPassword)
+        {
+            if (user == null)
+            {
+                return ErrorJsonResult("未获取用户相关信息");
+            }
+            if (string.IsNullOrEmpty(copyPassword))
+            {
+                return ErrorJsonResult("确认密码不能为空");
+            }
+            if (user.Password != copyPassword)
+            {
+                return ErrorJsonResult("输入的两次密码不一致，请核对密码信息");
+            }
+            if (Core.UserManager.Exist(user.Name,City.ID))
+            {
+                return ErrorJsonResult("系统中已经存在相同的用户名");
+            }
+            user.CityID = City.ID;
+            var id = Core.UserManager.Save(user);
+            if (id <= 0)
+            {
+                return ErrorJsonResult("保存用户失败");
+            }
+
+
+            return SuccessJsonResult();
+        }
         
         
 

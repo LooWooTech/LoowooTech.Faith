@@ -54,7 +54,7 @@ namespace LoowooTech.Faith.Models
                 }else if (DeDuck <= 20 && DeDuck > 0)
                 {
                     return GradeDegree.B;
-                }else if (DeDuck < 20 && DeDuck < 40)
+                }else if (DeDuck > 20 && DeDuck < 40)
                 {
                     return GradeDegree.C;
                 }
@@ -115,5 +115,7 @@ namespace LoowooTech.Faith.Models
                 return GradeDegree.D;
             }
         }
+        public int CityID { get; set; }
+ 
     }
 }

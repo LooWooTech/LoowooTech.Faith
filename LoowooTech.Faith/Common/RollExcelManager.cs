@@ -1,5 +1,6 @@
 ﻿using LoowooTech.Faith.Models;
 using NPOI.SS.UserModel;
+using NPOI.XWPF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,52 @@ namespace LoowooTech.Faith.Common
 
 
         private static string _modelScorePath { get; set; }
+        private static string _modelBlackPath { get; set; }
+        private static string _modelNotificationPath { get; set; }
+        private static string _modelProtocolPath { get; set; }
+        private static string _modeJiaXingPath { get; set; }
         static RollExcelManager()
         {
             _modelExcelName = System.Configuration.ConfigurationManager.AppSettings["Roll"] ?? "Roll.xls";
             _modelExcelPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", _modelExcelName);
-
             _modelScorePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["Score"] ?? "Score.xls");
+            _modelBlackPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["BLACK"] ?? "Black.docx");
+            _modelNotificationPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["Notification"] ?? "Notification.docx");
+            _modelProtocolPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["Protocol"] ?? "Protocol.docx");
+            _modeJiaXingPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Excels", System.Configuration.ConfigurationManager.AppSettings["JiaXing"] ?? "JiaXing.xls");
+        }
+        public static IWorkbook SaveJiaXing(List<Enterprise> list)
+        {
+            if (!System.IO.File.Exists(_modeJiaXingPath))
+            {
+                return null;
+            }
+            IWorkbook workbook = _modeJiaXingPath.OpenExcel();
+            if (workbook != null)
+            {
+                ISheet sheet = workbook.GetSheetAt(0);
+                if (sheet != null)
+                {
+                    var modelRow = sheet.GetRow(1);
+                    var startLine = 1;
+                    foreach(var item in list.OrderByDescending(e=>e.Degree))
+                    {
+                        var row = sheet.GetRow(startLine) ?? sheet.CreateRow(startLine);
+                        startLine++;
+                        var cell = ExcelManager.GetCell(row, 0, modelRow);
+                        cell.SetCellValue(item.Degree.GetDescription());
+                        ExcelManager.GetCell(row, 1, modelRow).SetCellValue(item.Name);
+                        ExcelManager.GetCell(row, 2, modelRow).SetCellValue(item.USCC);
+                        ExcelManager.GetCell(row, 3, modelRow).SetCellValue(item.Lawyer);
+                        ExcelManager.GetCell(row, 4, modelRow).SetCellValue(item.LawNumber);
+                        ExcelManager.GetCell(row, 5, modelRow);
+                        ExcelManager.GetCell(row, 6, modelRow);
+                        ExcelManager.GetCell(row, 7, modelRow);
+                        ExcelManager.GetCell(row, 8, modelRow).SetCellValue(string.Join(";", item.ConductStandards.Select(e => e.StandardName).ToArray()));
+                    }
+                }
+            }
+            return workbook;
         }
 
         public static IWorkbook SaveScore(List<EnterpriseScore> enterprises,List<LawyerScore> lawyers)
@@ -91,7 +132,7 @@ namespace LoowooTech.Faith.Common
             {
                 row = sheet.CreateRow(0);
             }
-            ICell cell = row.GetCell(3);
+            NPOI.SS.UserModel.ICell cell = row.GetCell(3);
             if (cell == null)
             {
                 cell = row.CreateCell(3);
@@ -137,6 +178,94 @@ namespace LoowooTech.Faith.Common
                 ExcelManager.GetCell(row, 5, modelRow).SetCellValue(item.DeDuck);
                 ExcelManager.GetCell(row, 6, modelRow).SetCellValue(item.Degree.ToString());
             }
+        }
+        public static XWPFDocument SaveWord(Letter letter)
+        {
+            XWPFDocument doc=null;
+            switch (letter.Book)
+            {
+                case Book.Notification:
+                    doc=_modelNotificationPath.OpenWord();
+                    break;
+                case Book.Protocol:
+                    doc = _modelProtocolPath.OpenWord();
+                    break;
+            }
+            if (doc != null)
+            {
+                var paras = doc.Paragraphs;
+                foreach(var para in paras)
+                {
+                    var text = para.ParagraphText;
+                    var runs = para.Runs;
+                    for(var i = 0; i < runs.Count; i++)
+                    {
+                        var run = runs[i];
+                        var str = run.Text
+                            .Replace("{Number}", letter.Number)
+                            .Replace("{Name}", letter.Name)
+                            .Replace("{Credit}", letter.Credit)
+                            .Replace("{Description}", letter.Description)
+                            .Replace("{Contact}", letter.Contact)
+                            .Replace("{TelPhone}", letter.TelPhone)
+                            .Replace("{Time}", letter.Time)
+                            .Replace("{Signature}", letter.Signature);
+                        run.SetText(str);
+                    }
+                }
+            }
+            return doc;
+        }
+
+        public static XWPFDocument SaveWord(List<RollList> list)
+        {
+            if (!System.IO.File.Exists(_modelBlackPath))
+            {
+                return null;
+            }
+            XWPFDocument doc = _modelBlackPath.OpenWord();
+            if (doc != null)
+            {
+                var paras = doc.Paragraphs;
+                foreach(var para in paras)
+                {
+                    var text = para.ParagraphText;
+                    var runs = para.Runs;
+                    for(var i = 0; i < runs.Count; i++)
+                    {
+                        var run = runs[i];
+                        var str=run.Text.Replace("{Time}", DateTime.Now.ToLongDateString());
+                        run.SetText(str);
+                    }
+                }
+                var tables = doc.Tables;
+                var table = tables[0];
+              
+                var modelrow = table.GetRow(0);
+                var startline = 1;
+                foreach(var item in list)
+                {
+                    XWPFTableRow row = table.GetRow(startline);
+                    if (row == null)
+                    {
+                        row = table.CreateRow();
+                    }
+                    var run = ExcelManager.GetRun(row, 0, modelrow);
+                    run.SetText((startline++).ToString());
+                    ExcelManager.GetRun(row, 1, modelrow).SetText(item.Name);
+                    if (item.ConductStandards != null)
+                    {
+                        var array = item.ConductStandards.Select(e => e.ContractNumber).Distinct().ToArray();
+                        var array2 = item.ConductStandards.Select(e => string.Format("{0},应记{1}分", e.StandardName, e.Score)).ToArray();
+                        ExcelManager.GetRun(row, 2, modelrow).SetText(string.Join(";", array));
+                        ExcelManager.GetRun(row, 4, modelrow).SetText(item.ConductStandards.Sum(e => e.Area).ToString());
+                        ExcelManager.GetRun(row, 5, modelrow).SetText(array2.Length>0? string.Format("涉及{0}", string.Join(";", array2)):"");
+                    }
+
+
+                }
+            }
+            return doc;
         }
     }
 }

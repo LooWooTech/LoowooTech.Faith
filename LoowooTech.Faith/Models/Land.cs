@@ -145,6 +145,7 @@ namespace LoowooTech.Faith.Models
         /// </summary>
         public string Location { get; set; }
         public DateTime CreateTime { get; set; }
+        public int CityID { get; set; }
     }
 
     public enum SoldWay

@@ -13,6 +13,11 @@
             <th>合法用地面积【亩】</th>
             <th>百分比</th>
             <th>应扣分值</th>
+            <th>资料</th>
+            @if (Identity.Role > UserRole.Guest)
+            {
+                <th>操作</th>
+            }
           
         </tr>
     </thead>
@@ -28,7 +33,30 @@
                     @(Math.Round(item.IllegalArea / item.Area * 100, 2))
                 </td>
                 <td>@(item.Score)</td>
-             
+                <td>
+                    <a class="btn btn-success btn-xs" href="/File/DetailWindows?sid=@(item.ID)&&Type=@(FileType.LandRecord)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-eye-open"></i>查看资料</a>
+                    @if (Identity.IsAuthenticated && Identity.Role > UserRole.Guest)
+                    {
+                        <a class="btn btn-default btn-xs" href="/File/Create?sid=@(item.ID)&&Type=@(FileType.LandRecord)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-plus-sign"></i>录入资料</a>
+
+                        <a class="btn btn-primary btn-xs" href="/File/Edit?sid=@(item.ID)&&Type=@(FileType.LandRecord)" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-edit"></i>资料管理</a>
+                    }
+                </td>
+                @if (Identity.Role > UserRole.Guest)
+                {
+                    <td>
+                        @if (item.State == LandRecordState.Enter)
+                        {
+                            <a href="/LandRecord/Relieve?id=@(item.ID)" class="btn btn-info btn-xs" data-toggle="modal" data-target="#Modal"><i class="glyphicon glyphicon-flag"></i>&nbsp;解除</a>
+                        }
+                        else
+                        {
+                            <a href="/LandRecord/CancelRelieve?id=@(item.ID)" class="btn btn-success btn-xs" name="Relieve"><i class="glyphicon glyphicon-flag"></i>&nbsp;撤销解除</a>
+                        }
+                       
+                    </td>
+                }
+               
             </tr>
         }
     </tbody>
